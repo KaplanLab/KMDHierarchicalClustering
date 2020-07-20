@@ -1,2 +1,2 @@
-# KMD_hierarchical_agglomerative_clustering
-clustering method based on hierarchical clustering with KMD linkage
+# KMD hierarchical clustering
+clustering method based on hierarchical agglomerative clustering with KMD linkage
