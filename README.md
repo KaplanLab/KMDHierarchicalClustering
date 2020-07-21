@@ -46,7 +46,7 @@ from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDLinkage
     path- path to self prediction for each k , if False - prediction will not be saved
     will be required
  
-  ## Usage example
+## Usage example
   
 ```
 KMDLinkage(X, k='compute', n_clusters = 2, min_cluster_size = 10)
