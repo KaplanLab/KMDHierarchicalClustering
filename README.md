@@ -8,7 +8,8 @@ Packages: scipy, numpy, matplotlib
 
 ## Getting Started
 Download the project to your work directory:
+"""
 git clone https://github.com/avivzelig/KMDHierarchicalClustering.git
-
+"""
 
 
