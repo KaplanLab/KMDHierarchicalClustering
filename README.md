@@ -48,8 +48,9 @@ from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDLinkage
  
   ## Usage example
   
-"""
+```
 KMDLinkage(X, k='compute', n_clusters = 2, min_cluster_size = 10)
-"""
+```
+
 
 
