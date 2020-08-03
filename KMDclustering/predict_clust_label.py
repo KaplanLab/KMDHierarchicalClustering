@@ -1,9 +1,11 @@
 import numpy as np
 from scipy import cluster
-import time
-import matplotlib.pyplot as plt
+
 
 class dend_search_tree:
+    """
+    tree database for hierarchical clustering result
+    """
     def __init__(self,tree,parent_node = None):
         self.count = tree.count
         if  self.is_leaf():
@@ -120,7 +122,6 @@ def predict(Z,n_clusters,min_clust_size,dists,k,certainty = 0.5):
     list_of_nodes= cluster_bfs(n_clusters,Z_tree,min_clust_size)
     y_pred,all_dists_sum,merge_dists_sum = get_clust_dict(list_of_nodes,dists.shape[0])
     list_of_clusters = [[] for i in range(n_clusters+1)]
-    sil_score_list = []
 
 
     #create list of index for each cluster
@@ -130,23 +131,18 @@ def predict(Z,n_clusters,min_clust_size,dists,k,certainty = 0.5):
         else:
             list_of_clusters[int(y_pred[i])].append(i)
 
-    if not any(list_of_clusters[1:]):
-        print("all labels are outliers")
-        min_sil, avg_sil = (-1,-1)
-    else:
-        min_sil,avg_sil = kmd_silhouette_score(dists,list_of_clusters[1:],k)
 
-    sil_score_list+=[min_sil,avg_sil]
     # predict  cluster of outliers
     outlier_score = []
     outlier_list = []
-    for i in range(len(y_pred)) :
-        if y_pred[i] == -1 :
-            outlier_list.append(i)
-            y_pred[i],score = predict_outlier_label(i,dists,list_of_clusters,k)
-            outlier_score.append((i,score))
-            if score < certainty:
-                y_pred[i] = -1
+    if len(list_of_clusters[1])>0:
+        for i in range(len(y_pred)) :
+            if y_pred[i] == -1 :
+                outlier_list.append(i)
+                y_pred[i],score = predict_outlier_label(i,dists,list_of_clusters,k)
+                outlier_score.append((i,score))
+                if score < certainty:
+                    y_pred[i] = -1
 
     #create list of index for each cluster
     list_of_clusters = [[] for i in range(n_clusters+1)]
@@ -159,38 +155,46 @@ def predict(Z,n_clusters,min_clust_size,dists,k,certainty = 0.5):
 
     if not any(list_of_clusters[1:]):
         print("all labels are outliers")
-        min_sil, avg_sil = (-1,-1)
+        sil_score = -2
     else:
-        min_sil,avg_sil = kmd_silhouette_score(dists,list_of_clusters[1:],k)
+        sil_score = kmd_silhouette_score(dists,list_of_clusters[1:],k)
 
-    sil_score_list+=[min_sil,avg_sil]
+
     for i in range(len(y_pred)):
         if y_pred[i] >-1:
             y_pred[i]-=1
 
-    return np.array(y_pred,dtype=int),list_of_nodes,all_dists_sum,merge_dists_sum,sil_score_list,outlier_list
+    return np.array(y_pred,dtype=int),list_of_nodes,all_dists_sum,merge_dists_sum,sil_score, outlier_list
 
 def predict_outlier_label(outlier_index,dists,list_of_clusters,k):
     """
     predict outliers cluster assigment by minimum distance(k closest neighbor avg dist) from ,main clusters
     :param outlier_index : index of outlier that we want to cluster
     :param dists: distance array
-    :param list_of_clusters:
-    :param k:
-    :return:
+    :param list_of_clusters:list of lists, every list contains a cluster objects indices
+    :param k:linkage parameter
+    :return: cluster assigment , certainty score
     """
     max_id = 0
     min_dist_from_cluster = np.inf
-    sum_all_dists = 0
+    all_dists = []
     for cluster_id in range(1,len(list_of_clusters)):
         dist_from_cluster = np.mean(sorted(dists[outlier_index,list_of_clusters[cluster_id]])[0:k])
         if dist_from_cluster<min_dist_from_cluster:
             min_dist_from_cluster = dist_from_cluster
             max_id = cluster_id
-        sum_all_dists+=dist_from_cluster
+        all_dists += dist_from_cluster
+    sum_all_dists = sum(sorted(all_dists)[:2])
     return max_id , 1-(min_dist_from_cluster/sum_all_dists)
 
 def kmd_silhouette_score(dists,list_of_clusters,k):
+    """
+    generalized silhouette-type function to predict clustering performance
+    :param dists: distance array
+    :param list_of_clusters: list of lists, every list contains a cluster objects indices
+    :param k:linkage parameter
+    :return: kmd silhouette score
+    """
     sil_score_list_avg = []
     sil_score_size = []
     for i in range(len(list_of_clusters)):
@@ -215,7 +219,7 @@ def kmd_silhouette_score(dists,list_of_clusters,k):
         sil_score_list_avg.append(np.mean(np.min(dist_diff,axis=1)))
         sil_score_size.append(dist_diff.shape[0])
 
-    return min(sil_score_list_avg), np.sum((np.array(sil_score_list_avg)*np.array(sil_score_size)))/np.sum(sil_score_size)
+    return min(sil_score_list_avg)
 
 
 

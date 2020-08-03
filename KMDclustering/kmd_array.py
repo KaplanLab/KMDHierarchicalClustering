@@ -1,9 +1,5 @@
 import numpy as np
-import time
-from k_sorted_list import k_sorted_list
-from math import sqrt
 from statistics import mean
-import sys
 
 def make_kmd_array(dists, n):
     """
@@ -36,14 +32,7 @@ def k_min_sparse_topkl(dists, n):
 
 
 def merge_clusters(k_dists,x,y,k):
-    """
-    
-    :param k_dists:
-    :param x:
-    :param y:
-    :param k:
-    :return:
-    """
+
     n = k_dists.shape[0]
 
 
