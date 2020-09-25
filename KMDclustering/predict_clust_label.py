@@ -183,7 +183,7 @@ def predict_outlier_label(outlier_index,dists,list_of_clusters,k):
         if dist_from_cluster<min_dist_from_cluster:
             min_dist_from_cluster = dist_from_cluster
             max_id = cluster_id
-        all_dists += dist_from_cluster
+        all_dists.append(dist_from_cluster)
     sum_all_dists = sum(sorted(all_dists)[:2])
     return max_id , 1-(min_dist_from_cluster/sum_all_dists)
 

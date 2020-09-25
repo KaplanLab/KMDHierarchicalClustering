@@ -29,13 +29,9 @@ def k_min_sparse_topkl(dists, n):
     return k_min_dists
 
 
-
-
 def merge_clusters(k_dists,x,y,k):
 
     n = k_dists.shape[0]
-
-
     k_dists[:,y] = k_dists[:,y] + k_dists[:,x]
     for i in range(n):
            k_dists[i,y] = sorted(k_dists[i,y])[:k]

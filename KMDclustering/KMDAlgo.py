@@ -2,10 +2,9 @@ import numpy as np
 from math import sqrt
 import kmd_array
 from scipy.stats import spearmanr
-import cluster_scoring
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import pdist, squareform
-from KMDHierarchicalClustering.KMDclustering import  predict_clust_label
+from KMDHierarchicalClustering.KMDclustering import  predict_clust_label, cluster_scoring
 
 
 class LinkageUnionFind:
@@ -120,8 +119,7 @@ class Heap:
         self.index_by_key[key_j] = i
 
 class KMDLinkage:
-    def __init__(self,X, k='compute', n_clusters = 2, min_cluster_size = 10, affinity = 'compute', certainty = 0.5 ,
-                 k_scan_range = (1,100,3), y_true = [], plot_scores=False,path=False):
+    def __init__(self,X, k='compute', n_clusters = 2, min_cluster_size = 'compute', affinity = 'euclidean', certainty = 0.5 ,k_scan_range = (1,100,3), y_true = [], plot_scores=False,path=False):
         """
         :param X- dataset to cluster
         :param k-number of minimum distances to calculate distance between clusters. if flag is compute, best k will be predicted.
@@ -138,25 +136,32 @@ class KMDLinkage:
         :param path - path to self prediction for each k , if False - prediction will not be saved
         will be required
         """
+
         self.certainty = certainty
         self.n_clusters = n_clusters
-        self.min_cluster_size = min_cluster_size
-        if affinity == 'compute':
-            if X.shape[1] > 100 :
-                self.affinity = 'correlation'
-            else:
-                self.affinity = 'euclidean'
 
-        if self.affinity == 'precompted':
+        if affinity == 'precompted':
             self.dists = X
         else:
-            self.dists = self.clac_dists(X,self.affinity)
+            self.dists = self.clac_dists(X,affinity)
+
+        if min_cluster_size == 'compute':
+            self.min_cluster_size = max(int(X.shape[0] / (n_clusters * 10)), 2)
+            print ('Default minimum cluster size is : ' + str(
+                self.min_cluster_size) + ' calculated by: max(2,#objects /(10*#clusters)) ')
+            print (
+                'In general, minimum cluster size can be chosen to be slightly smaller than the size of the smallest expected cluster')
+        else:
+            self.min_cluster_size = min_cluster_size
 
         if k == 'compute':
             self.k = self.predict_k( min_k= k_scan_range[0], max_k = k_scan_range[1],k_jumps= k_scan_range[2],y_true = y_true,plot_scores = plot_scores, path= path )
             print ('Predicted k is : '+str(self.k))
         else:
             self.k = k
+
+
+
     def clac_dists(self,data, method):
         """
         calaculate distance matrix
@@ -192,7 +197,6 @@ class KMDLinkage:
         k_list = np.array(list(range(min_k, max_k, k_jumps)))
         k_min_dists = kmd_array.make_kmd_array(dists, n)
         for k in k_list:
-            print ('k=' + str(k))
             Z = fast_linkage(dists, n, k, data=k_min_dists)
             clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score, outlier_list = predict_clust_label.predict(
                 Z, num_of_clusters, min_cluster_size, dists, k)
@@ -204,13 +208,13 @@ class KMDLinkage:
 
             if path:
                 np.save(str(path) + '_k_' + str(k), clust_assign)
-            print ('sil_score')
-            print (sil_score)
+
 
         in_score_list = np.array(in_score_list)
         in_score_list = (in_score_list - in_score_list.min()) / (in_score_list.max() - in_score_list.min())
         for i in range(len(successful_k)):
             in_score_list[i] = sqrt(in_score_list[i]) - ((successful_k[i] / n))
+        self.sil_score = max(in_score_list)
 
         if plot_scores:
             plt.figure()
@@ -244,11 +248,24 @@ class KMDLinkage:
         self.Z = fast_linkage(self.dists, n, self.k)
 
     def predict(self,X):
-        clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score_list,outlier_list = predict_clust_label.predict(self.Z, self.n_clusters,self.min_cluster_size, self.dists, self.k, self.certainty )
+        clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict_clust_label.predict(self.Z, self.n_clusters,self.min_cluster_size, self.dists, self.k, self.certainty )
         self.outlier_list = outlier_list
 
         return clust_assign
 
+    def predict_M(self,y_true):
+        sil_score_list = []
+        M_list = []
+        accuracy_list = []
+        for M in range(2,500,10):
+            clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict_clust_label.predict(self.Z, self.n_clusters,M, self.dists, self.k, self.certainty )
+            sil_score_list.append(sil_score)
+            M_list.append(M)
+            accuracy_list.append(cluster_scoring.hungarian_acc(y_true,clust_assign))
+        np.save('sil_score_m',sil_score_list)
+        np.save('M_list', M_list)
+        np.save('accuracy_list',accuracy_list)
+        return clust_assign
 
 def label(Z,  n):
     """Correctly label clusters in unsorted dendrogram."""
