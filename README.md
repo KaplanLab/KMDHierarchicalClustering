@@ -31,10 +31,10 @@ from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDLinkage
   
 - Parmaters that are recomemded to use as defult:
 
-    affinity- Metric used to compute the distance. Can be “euclidean”, “correlation”, "spearman",“precomputed",'compute'
-    or any metric used by scipy.spatial.distance.pdist.If “precomputed”,a distance matrix (instead of a similarity matrix) is needed as input for the fit method
-    If “compute” flag is used, algorithem will decide based on dataset size 
-
+    affinity- Metric used to compute the distance. Can be "euclidean", "correlation", "spearman","precomputed"
+    or any metric used by scipy.spatial.distance.pdist.If "precomputed",a distance matrix (instead of a similarity matrix) is needed as input for the fit method
+    default affinity is "correlation" 
+    
     certainty- parameter indicating how certain the algorithm is in the correctness of its classification in the outlier hanging step, if 0.5 - all outliers will be       hanged if 1 - outliers will not be hanged
 
     k_scan_range-(tuple) the range of k's used to search for k.(start k, stop k, jumps)
@@ -49,7 +49,10 @@ from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDLinkage
 ## Usage example
   
 ```
-KMDLinkage(X, k='compute', n_clusters = 2, min_cluster_size = 10)
+kmd_cluster = KMDLinkage(k='compute', n_clusters = 2, min_cluster_size = 10)
+kmd_cluster.fit(X)
+y = kmd_cluster.predict(X)
+
 ```
 
 
