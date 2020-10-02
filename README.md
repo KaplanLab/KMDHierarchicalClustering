@@ -32,8 +32,8 @@ from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDLinkage
 - Parmaters that are recomemded to use as defult:
 
     affinity- Metric used to compute the distance. Can be "euclidean", "correlation", "spearman","precomputed"
-    or any metric used by scipy.spatial.distance.pdist.If "precomputed",a distance matrix (instead of a similarity matrix) is needed as input for the fit method
-    default affinity is "correlation" 
+    or any metric used by scipy.spatial.distance.pdist.If "precomputed",an adjacency matrix is needed as input 
+    default affinity is "euclidean" 
     
     certainty- parameter indicating how certain the algorithm is in the correctness of its classification in the outlier hanging step, if 0.5 - all outliers will be       hanged if 1 - outliers will not be hanged
 
