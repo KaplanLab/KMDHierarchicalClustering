@@ -119,9 +119,8 @@ class Heap:
         self.index_by_key[key_j] = i
 
 class KMDLinkage:
-    def __init__(self,X, k='compute', n_clusters = 2, min_cluster_size = 'compute', affinity = 'euclidean', certainty = 0.5 ,k_scan_range = (1,100,3), y_true = [], plot_scores=False,path=False):
+    def __init__(self, k='compute', n_clusters = 2, min_cluster_size = 'compute', affinity = 'euclidean', certainty = 0.5 ,k_scan_range = (1,100,3), y_true = [], plot_scores=False,path=False):
         """
-        :param X- dataset to cluster
         :param k-number of minimum distances to calculate distance between clusters. if flag is compute, best k will be predicted.
         :param n_clusters - number of clusters
         :param min_cluster_size - the minimum points that can be in a cluster,if cluster is smaller then this size it is
@@ -139,27 +138,13 @@ class KMDLinkage:
 
         self.certainty = certainty
         self.n_clusters = n_clusters
-
-        if affinity == 'precompted':
-            self.dists = X
-        else:
-            self.dists = self.clac_dists(X,affinity)
-
-        if min_cluster_size == 'compute':
-            self.min_cluster_size = max(int(X.shape[0] / (n_clusters * 10)), 2)
-            print ('Default minimum cluster size is : ' + str(
-                self.min_cluster_size) + ' calculated by: max(2,#objects /(10*#clusters)) ')
-            print (
-                'In general, minimum cluster size can be chosen to be slightly smaller than the size of the smallest expected cluster')
-        else:
-            self.min_cluster_size = min_cluster_size
-
-        if k == 'compute':
-            self.k = self.predict_k( min_k= k_scan_range[0], max_k = k_scan_range[1],k_jumps= k_scan_range[2],y_true = y_true,plot_scores = plot_scores, path= path )
-            print ('Predicted k is : '+str(self.k))
-        else:
-            self.k = k
-
+        self.affinity = affinity
+        self.min_cluster_size = min_cluster_size
+        self.k = k
+        self.k_scan_range = k_scan_range
+        self.y_true = []
+        self.plot_scores = False
+        self.path = False
 
 
     def clac_dists(self,data, method):
@@ -243,6 +228,24 @@ class KMDLinkage:
         Z - computed linkage matrix
         outlier list - list of objects classified as outliers
         """
+
+        if self.affinity == 'precompted':
+            self.dists = X
+        else:
+            self.dists = self.clac_dists(X,self.affinity)
+
+        if self.min_cluster_size == 'compute':
+            self.min_cluster_size = max(int(X.shape[0] / (n_clusters * 10)), 2)
+            print ('Default minimum cluster size is : ' + str(
+                self.min_cluster_size) + ' calculated by: max(2,#objects /(10*#clusters)) ')
+            print (
+                'In general, minimum cluster size can be chosen to be slightly smaller than the size of the smallest expected cluster')
+
+        if self.k == 'compute':
+            self.k = self.predict_k( min_k= self.k_scan_range[0], max_k = self.k_scan_range[1],k_jumps= self.k_scan_range[2],y_true = self.y_true,plot_scores = self.plot_scores, path= self.path )
+            print ('Predicted k is : '+str(self.k))
+
+
         dists =self.dists.copy()
         n = np.shape(dists)[0]
         self.Z = fast_linkage(self.dists, n, self.k)
