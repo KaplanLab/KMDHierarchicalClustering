@@ -49,6 +49,8 @@ from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDLinkage
 ## Usage example
   
 ```
+#  module can take different kinds of matrix as input(X parameter). All the methods accept standard data matrices of shape [n_samples, n_features]
+# module can take precomputed adjacency matrix with affinity flag = "precomputed"
 kmd_cluster = KMDLinkage(k='compute', n_clusters = 2, min_cluster_size = 10)
 kmd_cluster.fit(X)
 y = kmd_cluster.predict(X)
