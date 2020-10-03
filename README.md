@@ -55,6 +55,3 @@ kmd_cluster.fit(X)
 y = kmd_cluster.predict(X)
 
 ```
-
-
-
