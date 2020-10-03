@@ -62,3 +62,7 @@ kmd_cluster.fit(X)
 y = kmd_cluster.predict(X)
 
 ```
+
+## demos 
+Toy_dataset_example.ipynb - Evaluates our method’s performance on a standard set of simulated toy datasets - expected time: 1465 seconds
+
