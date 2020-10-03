@@ -70,5 +70,5 @@ Zeisel15_dataset.ipynb - Example of method’s performance on a real single cell
 
 Lawlor17_dataset.ipynb - Example of method’s performance on a real single cell dataset - - expected time: 91 seconds
 
-Li17 - Example of method’s performance on a real single cell dataset - - expected time: 42 seconds
+Li17_dataset.ipynb - Example of method’s performance on a real single cell dataset - - expected time: 42 seconds
 
