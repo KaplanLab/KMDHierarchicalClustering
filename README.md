@@ -1,8 +1,8 @@
-# KMD hierarchical clustering
-Clustering method based on hierarchical agglomerative clustering with KMD linkage
+# KMD clustering
+A clustering method based on hierarchical clustering using KMD linkage, KMD silhouette and outlier-aware partitioning
 
- ## Requirments 
-Python: versions 3.6.5 and 3.7. We don't expect this to work with Python 2.x
+ ## Requirements 
+Python: tested on versions 3.6.5 and 3.7. We don't expect this to work with Python 2.x
 
 Python Dependencies:
 ```
@@ -13,13 +13,13 @@ Python Dependencies:
  itertools>=8.5.0
  ```
 
-## Getting Started
+## Getting started
 Download the project to your work directory:
 ```
-git clone https://github.com/avivzelig/KMDHierarchicalClustering.git
+git clone https://github.com/KMDHierarchicalClustering/KMDHierarchicalClustering.git
 ```
 
-## Usage in Python enviorment 
+## Usage in Python environment 
 
 ```
 from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDLinkage
@@ -27,35 +27,31 @@ from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDLinkage
 
 - Parameters to specify:
 
-  X- dataset to cluster
+  X: dataset to cluster
   
-  k- number of minimum distances used to calculate distance between clusters. if flag is compute, best k will be predicted.
+  k: number of minimum distances used to calculate distance between clusters. if set to is 'compute' (default), KMD silhouette will be used to choose k.
   
-  n_clusters- number of clusters
+  n_clusters: number of clusters
   
-  min_cluster_size- the minimum number of points that can be in a cluster,if cluster is smaller then this size it is considered as an outlier
+  min_cluster_size: minimal cluster size. If a cluster is smaller then this size it is considered to be an outlier.
   
-  
-- Parmaters that are recomemded to use as defult:
+  - Parameters that are recommended to be used as default:
 
-    affinity- Metric used to compute the distance. Can be "euclidean", "correlation", "spearman","precomputed"
-    or any metric used by scipy.spatial.distance.pdist.If "precomputed",an adjacency matrix is needed as input 
-    default affinity is "euclidean" 
+    affinity: metric used to compute the distance. Can be "euclidean" (default), "correlation", "spearman","precomputed"
+    or any metric used by `scipy.spatial.distance.pdist`. If "precomputed", an adjacency matrix is given as input. 
     
-    certainty- parameter indicating how certain the algorithm is in the correctness of its classification in the outlier hanging step, if 0.5 - all outliers will be       hanged if 1 - outliers will not be hanged
+    certainty: number between 0.5 and 1 indicating a the confidence threshold to use for outlier assignment to core clusters. 0.5 means all outliers will be left out (no assigment), 1 means all outliers will be assigned to core clusters.
 
-    k_scan_range-(tuple) the range of k's used to search for k.(start k, stop k, jumps)
+    k_scan_range: tuple indicating the range of k values to be used to search for k. Given as (start k, stop k, jumps).
 
-    y_true- cluster True labels
+    y_true: True cluster labels (only used in evaluation scenario).
 
-    plot_scores- if True, a plot of intrinsic score vs extrinsic score on different k's will be ploted, True labels
+    plot_scores: if True, a plot of KMD Silhouette vs accuracy across different k values will be generated (only used in evaluation scenario).
 
-    path- path to self prediction for each k , if False - prediction will not be saved
-    will be required
+    path: Path to self prediction for each k. If False, prediction will not be saved will be required.
  
 ## Usage example
-module can take different kinds of matrix as input(X parameter). All the methods accept standard data matrices of shape [n_samples, n_features]
-module can take precomputed adjacency matrix with affinity flag = "precomputed"
+
 ```
 kmd_cluster = KMDLinkage(k='compute', n_clusters = 2, min_cluster_size = 10)
 kmd_cluster.fit(X)
@@ -64,11 +60,11 @@ y = kmd_cluster.predict(X)
 ```
 
 ## demos 
-Toy_dataset_example.ipynb - Evaluates our method’s performance on a standard set of simulated toy datasets - expected time: 1465 seconds
+Toy_dataset_example.ipynb - Evaluates our method’s performance on a standard set of simulated toy datasets - expected run time: ~25 minutes
 
-Zeisel15_dataset.ipynb - Example of method’s performance on a real single cell dataset - - expected time: 444 seconds
+Zeisel15_dataset.ipynb - Example of method’s performance on a single cell dataset - - expected run time: ~8 minutes
 
-Lawlor17_dataset.ipynb - Example of method’s performance on a real single cell dataset - - expected time: 91 seconds
+Lawlor17_dataset.ipynb - Example of method’s performance on a single cell dataset - - expected run time: ~2 minutes
 
-Li17_dataset.ipynb - Example of method’s performance on a real single cell dataset - - expected time: 42 seconds
+Li17_dataset.ipynb - Example of method’s performance on a single cell dataset - - expected run time: ~1 minute
 
