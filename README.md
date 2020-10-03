@@ -65,7 +65,10 @@ y = kmd_cluster.predict(X)
 
 ## demos 
 Toy_dataset_example.ipynb - Evaluates our method’s performance on a standard set of simulated toy datasets - expected time: 1465 seconds
+
 Zeisel15_dataset.ipynb - Example of method’s performance on a real single cell dataset - - expected time: 444 seconds
+
 Lawlor17_dataset.ipynb - Example of method’s performance on a real single cell dataset - - expected time: 91 seconds
+
 Li17 - Example of method’s performance on a real single cell dataset - - expected time: 42 seconds
 
