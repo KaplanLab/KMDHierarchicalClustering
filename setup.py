@@ -17,7 +17,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="KMDHierarchicalClustering",
-    version=0.0.1,
+    version=version,
     author='Aviv Zelig, Noam Kaplan',
     author_email="noam.kaplan@technion.ac.il",
     description="KMD clustering: Robust generic clustering of biological data",
