@@ -1,10 +1,12 @@
 import numpy as np
 from math import sqrt
-import kmd_array
 from scipy.stats import spearmanr
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import pdist, squareform
-from KMDHierarchicalClustering.KMDclustering import  predict_clust_label, cluster_scoring
+
+from .kmd_array import make_kmd_array, merge_clusters
+from .predict_clust_label import predict
+from .cluster_scoring import hungarian_acc
 
 
 class LinkageUnionFind:
@@ -183,13 +185,13 @@ class KMDLinkage:
         k_min_dists = kmd_array.make_kmd_array(dists, n)
         for k in k_list:
             Z = fast_linkage(dists, n, k, data=k_min_dists)
-            clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score, outlier_list = predict_clust_label.predict(
+            clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score, outlier_list = predict(
                 Z, num_of_clusters, min_cluster_size, dists, k)
             if sil_score > -1 :
                 in_score_list.append(sil_score)
                 successful_k.append(k)
                 if plot_scores:
-                    ex_score_list.append(cluster_scoring.hungarian_acc(y_true, clust_assign)[0])
+                    ex_score_list.append(hungarian_acc(y_true, clust_assign)[0])
 
             if path:
                 np.save(str(path) + '_k_' + str(k), clust_assign)
@@ -251,7 +253,7 @@ class KMDLinkage:
         self.Z = fast_linkage(self.dists, n, self.k)
 
     def predict(self,X):
-        clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict_clust_label.predict(self.Z, self.n_clusters,self.min_cluster_size, self.dists, self.k, self.certainty )
+        clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict(self.Z, self.n_clusters,self.min_cluster_size, self.dists, self.k, self.certainty )
         self.outlier_list = outlier_list
 
         return clust_assign
@@ -261,10 +263,10 @@ class KMDLinkage:
         M_list = []
         accuracy_list = []
         for M in range(2,500,10):
-            clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict_clust_label.predict(self.Z, self.n_clusters,M, self.dists, self.k, self.certainty )
+            clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict(self.Z, self.n_clusters,M, self.dists, self.k, self.certainty )
             sil_score_list.append(sil_score)
             M_list.append(M)
-            accuracy_list.append(cluster_scoring.hungarian_acc(y_true,clust_assign))
+            accuracy_list.append(hungarian_acc(y_true,clust_assign))
         np.save('sil_score_m',sil_score_list)
         np.save('M_list', M_list)
         np.save('accuracy_list',accuracy_list)
@@ -322,7 +324,7 @@ def fast_linkage(D,n,K,data =np.array([])):
     size = np.ones(n)  # sizes of clusters
     # generating 3D array of the K minimum dists for each new cluster
     if data.shape[0] == 0 :
-        K_min_dists = kmd_array.make_kmd_array(D, n)
+        K_min_dists = make_kmd_array(D, n)
     else:
         K_min_dists = data.copy()
 
@@ -374,7 +376,7 @@ def fast_linkage(D,n,K,data =np.array([])):
         cluster_id[y] = n + k  # Update ID of y.
 
         # update k_min_dists
-        K_min_dists,new_cluster_vec = kmd_array.merge_clusters(K_min_dists, x, y, K)
+        K_min_dists,new_cluster_vec = merge_clusters(K_min_dists, x, y, K)
         dists[:, y] = new_cluster_vec
         dists[y, :] = new_cluster_vec
 

@@ -16,7 +16,7 @@ with open('requirements.txt') as f:
 
 
 setuptools.setup(
-    name="KMDHierarchicalClustering",  # Replace with your own username
+    name="KMDHierarchicalClustering",
     version=version,
     author='Aviv Zelig, Noam Kaplan',
     author_email="noam.kaplan@technion.ac.il",

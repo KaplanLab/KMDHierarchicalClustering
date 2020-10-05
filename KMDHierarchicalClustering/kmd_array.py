@@ -1,6 +1,7 @@
 import numpy as np
 from statistics import mean
 
+
 def make_kmd_array(dists, n):
     """
     Initialize array of lists, every entry of the distance array is a list with one value.

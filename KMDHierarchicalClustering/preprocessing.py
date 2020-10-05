@@ -1,7 +1,6 @@
 import scanpy as sc
 
 
-
 def filter_genes(data,precent):
     """
     filter over and under expressed genes
