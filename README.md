@@ -56,7 +56,6 @@ from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDClustering
 kmd_cluster = KMDClustering(k='compute', n_clusters = 2, min_cluster_size = 10)
 kmd_cluster.fit(X)
 y = kmd_cluster.predict(X)
-
 ```
 
 ## demos 
