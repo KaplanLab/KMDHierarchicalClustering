@@ -22,7 +22,7 @@ pip install git+https://github.com/KaplanLab/KMDHierarchicalClustering
 ## Usage in Python environment 
 
 ```
-from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDLinkage
+from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDClustering
 ```
 
 - Parameters to specify:
@@ -53,7 +53,7 @@ from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDLinkage
 ## Usage example
 
 ```
-kmd_cluster = KMDLinkage(k='compute', n_clusters = 2, min_cluster_size = 10)
+kmd_cluster = KMDClustering(k='compute', n_clusters = 2, min_cluster_size = 10)
 kmd_cluster.fit(X)
 y = kmd_cluster.predict(X)
 
