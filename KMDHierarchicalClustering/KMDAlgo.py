@@ -7,6 +7,10 @@ from scipy.spatial.distance import pdist, squareform
 from .kmd_array import make_kmd_array, merge_clusters
 from .predict_clust_label import predict
 from .cluster_scoring import hungarian_acc
+import warnings
+#ignore by message
+warnings.filterwarnings("ignore", message="invalid value encountered in true_divide")
+warnings.filterwarnings("ignore", message="invalid value encountered in double_scalars")
 
 
 class LinkageUnionFind:
