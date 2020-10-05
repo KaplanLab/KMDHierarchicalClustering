@@ -11,6 +11,9 @@ with open(convert_path('KMDHierarchicalClustering/__init__.py')) as ver_file:
     match = next(re.finditer('__version__ = "(.*)"', ver_file.read(), re.MULTILINE))
     version = match.group(1)
 
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
+
 
 setuptools.setup(
     name="KMDHierarchicalClustering",  # Replace with your own username
@@ -28,4 +31,5 @@ setuptools.setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
     python_requires='>=3.6',
+    install_requires=required,
 )
