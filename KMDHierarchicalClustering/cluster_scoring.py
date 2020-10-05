@@ -8,6 +8,7 @@ import warnings
 #ignore by message
 warnings.filterwarnings("ignore", message="invalid value encountered in true_divide")
 warnings.filterwarnings("ignore", message="invalid value encountered in double_scalars")
+warnings.filterwarnings("ignore", message="Mean of empty slice")
 
 
 def hungarian_acc(y_true,y_pred):
