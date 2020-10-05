@@ -120,7 +120,7 @@ class Heap:
         self.index_by_key[key_i] = j
         self.index_by_key[key_j] = i
 
-class KMDLinkage:
+class KMDClustering:
     def __init__(self, k='compute', n_clusters = 2, min_cluster_size = 'compute', affinity = 'euclidean', certainty = 0.5 ,k_scan_range = (1,100,3), y_true = [], plot_scores=False,path=False):
         """
         :param k-number of minimum distances to calculate distance between clusters. if flag is compute, best k will be predicted.
