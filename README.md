@@ -16,7 +16,7 @@ Python Dependencies:
 ## Getting started
 Download the project to your work directory:
 ```
-git clone https://github.com/KMDHierarchicalClustering/KMDHierarchicalClustering.git
+pip install git+https://github.com/KaplanLab/KMDHierarchicalClustering
 ```
 
 ## Usage in Python environment 
