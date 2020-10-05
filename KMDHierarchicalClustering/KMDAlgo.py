@@ -182,7 +182,7 @@ class KMDLinkage:
         ex_score_list = []
         successful_k = []
         k_list = np.array(list(range(min_k, max_k, k_jumps)))
-        k_min_dists = kmd_array.make_kmd_array(dists, n)
+        k_min_dists = make_kmd_array(dists, n)
         for k in k_list:
             Z = fast_linkage(dists, n, k, data=k_min_dists)
             clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score, outlier_list = predict(
