@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="KMDHierarchicalClustering", # Replace with your own username
+    name="KMDHierarchicalClustering",  # Replace with your own username
     version="0.0.0",
     author="avivzelig",
     author_email="author@example.com",
