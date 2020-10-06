@@ -22,7 +22,7 @@ pip install git+https://github.com/KaplanLab/KMDHierarchicalClustering
 ## Usage in Python environment 
 
 ```
-from KMDHierarchicalClustering.KMDclustering.KMDAlgo import KMDClustering
+from KMDHierarchicalClustering.KMDAlgo import KMDClustering
 ```
 
 - Parameters to specify:
