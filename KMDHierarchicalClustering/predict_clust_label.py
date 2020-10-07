@@ -46,7 +46,7 @@ def cluster_bfs(num_of_clusters,Z_tree,min_size_of_clust):
     while(split_count<num_of_clusters-1):
         if current.count < min_size_of_clust :#if the node is a outlier do nothing
             visited = visited
-        elif current.left.count>min_size_of_clust and current.right.count>min_size_of_clust:# if two splited clusters
+        elif current.left.count>= min_size_of_clust and current.right.count>= min_size_of_clust:# if two splited clusters
             split_count +=1                                                                 # are larger then min size
             cluster_roots += [dend_search_tree(current.left,current),dend_search_tree(current.right,current)] # they are cluster subtrees
             visited = visited + [dend_search_tree(current.left,current),dend_search_tree(current.right,current)] # we save the nodes,and count a split
