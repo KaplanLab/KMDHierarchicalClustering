@@ -204,7 +204,10 @@ def kmd_silhouette_score(dists,list_of_clusters,k):
         sorted_dists = np.sort(cluster_array,axis=1)[:,:-1][:,:k]# delete last row of infs
         if sorted_dists.shape[0] == 0:
             continue
-        a =np.average(sorted_dists[:,0:k],axis= 1)# sort distance from all cluster leafs, avg only k min dists
+        if list_of_clusters[i] == 1:
+            a = 0 # distance of cluster to itself of size 1
+        else:
+            a =np.average(sorted_dists[:,0:k],axis= 1)# sort distance from all cluster leafs, avg only k min dists
         idx = 0
         for j in range(len(list_of_clusters)):
             if len(list_of_clusters[j]) == 0:

@@ -191,8 +191,6 @@ class KMDClustering:
             Z = fast_linkage(dists, n, k, data=k_min_dists)
             clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score, outlier_list = predict(
                 Z, num_of_clusters, min_cluster_size, dists, k)
-            print (sil_score)
-            print (clust_assign)
             if sil_score > -1 :
                 in_score_list.append(sil_score)
                 successful_k.append(k)
