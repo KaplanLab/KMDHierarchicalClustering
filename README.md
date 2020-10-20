@@ -14,56 +14,60 @@ Python Dependencies:
  ```
 
 ## Getting started
-Download the project to your work directory:
+Installation using pip (requires pip and git):
 ```
 pip install git+https://github.com/KaplanLab/KMDHierarchicalClustering
 ```
+Alternatively, you can download or clone the repository.
+
+Prefix with `sudo` for global installation, alternatively use `pip install --user` for installation in your home directory.
 
 ## Usage in Python environment 
 
+Usage follows scikit-learn interface:
+
 ```
 from KMDHierarchicalClustering import KMDClustering
-```
-
-- Parameters to specify:
-
-  X: dataset to cluster
-  
-  k: number of minimum distances used to calculate distance between clusters. if set to is 'compute' (default), KMD silhouette will be used to choose k.
-  
-  n_clusters: number of clusters
-  
-  min_cluster_size: minimal cluster size. If a cluster is smaller then this size it is considered to be an outlier.
-  
-  - Parameters that are recommended to be used as default:
-
-    affinity: metric used to compute the distance. Can be "euclidean" (default), "correlation", "spearman","precomputed"
-    or any metric used by `scipy.spatial.distance.pdist`. If "precomputed", an adjacency matrix is given as input. 
-    
-    certainty: number between 0.5 and 1 indicating a the confidence threshold to use for outlier assignment to core clusters. 0.5 means all outliers will be left out (no assigment), 1 means all outliers will be assigned to core clusters.
-
-    k_scan_range: tuple indicating the range of k values to be used to search for k. Given as (start k, stop k, jumps).
-
-    y_true: True cluster labels (only used in evaluation scenario).
-
-    plot_scores: if True, a plot of KMD Silhouette vs accuracy across different k values will be generated (only used in evaluation scenario).
-
-    path: Path to self prediction for each k. If False, prediction will not be saved will be required.
- 
-## Usage example
-
-```
-kmd_cluster = KMDClustering(k='compute', n_clusters = 2, min_cluster_size = 10)
-kmd_cluster.fit(X)
+kmd_cluster = KMDClustering(n_clusters = 2)
+kmd_cluster.fit(X) # X is the dataset where rows are 
 y = kmd_cluster.predict(X)
 ```
 
-## demos 
-Toy_dataset_example.ipynb - Evaluates our method’s performance on a standard set of simulated toy datasets - expected run time: ~25 minutes
+Parameters:
 
-Zeisel15_dataset.ipynb - Example of method’s performance on a single cell dataset - - expected run time: ~8 minutes
+```
+KMDClustering(k='compute', n_clusters = 2, min_cluster_size = 'compute', affinity = 'euclidean', certainty = 0.5 ,k_scan_range = (1,100,3), y_true = [], plot_scores=False, path=False)
+```
 
-Lawlor17_dataset.ipynb - Example of method’s performance on a single cell dataset - - expected run time: ~2 minutes
+The main parameter that users should set is `n_clusters`. We recommend using default values for the rest of the parameters unless there is a specific reason to change these.
+ 
+`k`: number of minimum distances to calculate distance between clusters. if flag is compute, best k will be predicted.
 
-Li17_dataset.ipynb - Example of method’s performance on a single cell dataset - - expected run time: ~1 minute
+`n_clusters`: number of clusters.
+
+`min_cluster_size`: minimal cluster size. If a cluster is smaller then this size it is considered to be an outlier.
+
+`affinity`: metric used to compute the distance. Can be "euclidean" (default), "correlation", "spearman", "precomputed"
+    or any metric used by `scipy.spatial.distance.pdist`. If "precomputed", an adjacency matrix is given as input.
+    
+`certainty`:number between 0.5 and 1 indicating a the confidence threshold to use for outlier assignment to core clusters. 0.5 means all outliers will be left out (no assigment), 1 means all outliers will be assigned to core clusters.step (0.5 means all outliers will be assigned to core clusters; 1 means no outliers will be assigned).
+
+`k_scan_range`: tuple indicating the range of k values to be used to search for k. Given as (start k, stop k, jumps).
+
+`y_true`: true cluster labels (only used in evaluation scenario).
+
+`plot_scores`: if True, a plot of KMD Silhouette vs accuracy across different k values will be generated (only used in evaluation scenario).
+
+`path`: path to self prediction for each k, if False prediction will not be saved.
+
+
+## Demos 
+
+Toy_dataset_example.ipynb - Evaluates performance on a standard set of simulated toy datasets - expected run time: ~25 minutes
+
+Zeisel15_dataset.ipynb - Evaluaets performance on a single cell dataset - - expected run time: ~8 minutes
+
+Lawlor17_dataset.ipynb - Evaluates performance on a single cell dataset - - expected run time: ~2 minutes
+
+Li17_dataset.ipynb - Evaluates performance on a single cell dataset - - expected run time: ~1 minute
 
