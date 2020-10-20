@@ -29,7 +29,7 @@ Usage follows scikit-learn interface:
 ```
 from KMDHierarchicalClustering import KMDClustering
 kmd_cluster = KMDClustering(n_clusters = 2)
-kmd_cluster.fit(X) # X is the dataset where rows are 
+kmd_cluster.fit(X) # X is the dataset matrix
 y = kmd_cluster.predict(X)
 ```
 
