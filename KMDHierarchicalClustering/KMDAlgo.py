@@ -3,6 +3,8 @@ from math import sqrt
 from scipy.stats import spearmanr
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import pdist, squareform
+from multiprocessing import Pool
+import sys
 
 from .kmd_array import make_kmd_array, merge_clusters
 from .predict_clust_label import predict
@@ -165,7 +167,7 @@ class KMDClustering:
             return np.ones(corr_matrix.shape) - corr_matrix
         return squareform(pdist(data, method))
 
-    def predict_k(self, min_k= 1, max_k = 100, y_true=[], plot_scores=False, path=False, k_jumps=3):
+    def predict_k(self, min_k= 1, max_k = 100, y_true=[], plot_scores=False, path=False, k_jumps=3, runparallel = True):
         """
         predicting the best k for clustering analysis using the normalized kmd silhuete score
         we run on all k's and find the highest clustering score
@@ -185,10 +187,14 @@ class KMDClustering:
         in_score_list = []
         ex_score_list = []
         successful_k = []
-        k_list = np.array(list(range(min_k, max_k, k_jumps)))
+        k_list = list(range(min_k, max_k, k_jumps))
         k_min_dists = make_kmd_array(dists, n)
+
+        Z_list = []
         for k in k_list:
             Z = fast_linkage(dists, n, k, data=k_min_dists)
+            Z_list.append(Z)
+        for Z in Z_list:
             clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score, outlier_list = predict(
                 Z, num_of_clusters, min_cluster_size, dists, k)
             if sil_score > -1 :
@@ -252,7 +258,7 @@ class KMDClustering:
             print ('Predicted k is : '+str(self.k))
 
 
-        dists =self.dists.copy()
+        dists =self.dists
         n = np.shape(dists)[0]
         self.Z = fast_linkage(self.dists, n, self.k)
 
@@ -330,7 +336,7 @@ def fast_linkage(D,n,K,data =np.array([])):
     if data.shape[0] == 0 :
         K_min_dists = make_kmd_array(D, n)
     else:
-        K_min_dists = data.copy()
+        K_min_dists = data
 
     dists = D.copy() # Distances between clusters.
 
@@ -384,6 +390,7 @@ def fast_linkage(D,n,K,data =np.array([])):
         dists[:, y] = new_cluster_vec
         dists[y, :] = new_cluster_vec
 
+
         # Reassign neighbor candidates from x to y.
         # This reassignment is just a (logical) guess.
         for z in range(x):
@@ -409,6 +416,9 @@ def fast_linkage(D,n,K,data =np.array([])):
                 min_dist[y] = dist
                 min_dist_heap.change_value(y, dist)
     return Z
+
+
+
 
 
 
