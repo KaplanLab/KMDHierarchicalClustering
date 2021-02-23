@@ -43,7 +43,6 @@ def merge_clusters(k_dists,x,y,k):
     # delete
     k_dists[x,:] = [array.array('f',[])]*n
     k_dists[:,x] = [array.array('f',[])]*n
-    print ('clusters merged')
     return k_dists, merged_vec
 
 def merge_arrays(arr1,arr2,k):
