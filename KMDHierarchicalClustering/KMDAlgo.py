@@ -247,7 +247,7 @@ class KMDClustering:
             self.dists = self.clac_dists(X,self.affinity)
 
         if self.min_cluster_size == 'compute':
-            self.min_cluster_size = max(int(X.shape[0] / (n_clusters * 10)), 2)
+            self.min_cluster_size = max(int(X.shape[0] / (self.n_clusters * 10)), 2)
             print ('Default minimum cluster size is : ' + str(
                 self.min_cluster_size) + ' calculated by: max(2,#objects /(10*#clusters)) ')
             print (
