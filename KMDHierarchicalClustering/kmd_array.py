@@ -48,7 +48,7 @@ def merge_clusters(k_dists,x,y,k):
 
 def merge_arrays(arr1,arr2,k):
     n = len(arr1)+len(arr2)
-    array_size = min(int(float(n)),k) # maximum number of neigbors needed for each elemnt is k
+    array_size = min(n,k) # maximum number of neigbors needed for each elemnt is k
     arr3 = array.array('f')
     i = 0
     j = 0
