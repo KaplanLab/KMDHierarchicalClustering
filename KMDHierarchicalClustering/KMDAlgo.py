@@ -192,7 +192,7 @@ class KMDClustering:
 
         Z_list = []
         for k in k_list:
-            Z = fast_linkage(dists, n, k, data=k_min_dists)
+            Z = fast_linkage(dists, n, k, data=[])
             Z_list.append(Z)
         for Z in Z_list:
             clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score, outlier_list = predict(
