@@ -181,7 +181,9 @@ class KMDClustering:
          self.X = data
          x_to_assign,x_sampled= train_test_split(list(range(np.shape(data)[0])),test_size=percent_size,random_state=seed)
          self.dataset = data[x_sampled,:]
-         print (self.dataset.shape)
+         if self.affinity == 'precompted':
+             self.dataset = data[:,x_sampled]
+         print ('dataset shape after subsampeling' + str(self.dataset.shape))
          self.idx_sampled = x_sampled
          self.idx_to_assign = x_to_assign
 
@@ -292,9 +294,9 @@ class KMDClustering:
         self.calc_dists(self.dataset,self.affinity)
 
         if self.affinity == 'precompted':
-            self.dists = X
+            self.dists = self.dataset 
         else:
-            self.dists = self.calc_dists(X,self.affinity)
+            self.dists = self.calc_dists(self.dataset,self.affinity)
 
         if self.min_cluster_size == 'compute':
             self.min_cluster_size = max(int(self.dataset.shape[0] / (self.n_clusters * 10)), 2)
@@ -307,8 +309,6 @@ class KMDClustering:
             self.k = self.predict_k( min_k= self.k_scan_range[0], max_k = self.k_scan_range[1],k_jumps= self.k_scan_range[2],y_true = self.y_true,plot_scores = self.plot_scores, path= self.path )
             print ('Predicted k is : '+str(self.k))
 
-
-        dists =self.dists
         n = np.shape(dists)[0]
         self.Z = fast_linkage(self.dists, n, self.k)
 
