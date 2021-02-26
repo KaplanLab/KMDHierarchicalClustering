@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from scipy.spatial.distance import pdist, squareform
 from multiprocessing import Pool
 import sys
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import pairwise_distances
 
 from .kmd_array import make_kmd_array, merge_clusters
 from .predict_clust_label import predict
@@ -125,6 +127,14 @@ class Heap:
         self.key_by_index[j] = key_i
         self.index_by_key[key_i] = j
         self.index_by_key[key_j] = i
+        
+def create_list_of_clusters(y_pred, indexes):
+    # create list of indexes for each cluster
+    list_of_clusters = [[] for i in range(max(y_pred) + 1)]
+
+    for i, index in enumerate(indexes):
+        list_of_clusters[int(y_pred[i])].append(index)
+    return list_of_clusters
 
 class KMDClustering:
     def __init__(self, k='compute', n_clusters = 2, min_cluster_size = 'compute', affinity = 'euclidean', certainty = 0.5 ,k_scan_range = (1,100,3), y_true = [], plot_scores=False,path=False):
@@ -166,6 +176,39 @@ class KMDClustering:
             corr_matrix, p_matrix = spearmanr(data, axis=1)
             return np.ones(corr_matrix.shape) - corr_matrix
         return squareform(pdist(data, method))
+        def sample_data(self,data,percent_size,seed):
+         self.X = data
+         x_to_assign,x_sampled= train_test_split(list(range(np.shape(data)[0])),test_size=percent_size,random_state=seed)
+         self.dataset = data[x_sampled,:]
+         print (self.dataset.shape)
+         self.idx_sampled = x_sampled
+         self.idx_to_assign = x_to_assign
+
+    def assign_points(self,y_pred_sub, batch=5000):
+        list_of_clusters = create_list_of_clusters(y_pred_sub, self.idx_sampled)
+        y_pred = np.empty(self.X.shape[0], dtype=int)
+        point_idx_list = self.idx_to_assign
+        for point_idx in range(0, np.size(point_idx_list), batch):
+            if np.size(point_idx_list) - point_idx < batch:
+                batch = np.size(point_idx_list) - point_idx
+            min_dist = [np.inf] * batch
+            point_id = [-1] * batch
+
+            for cluster_id in range(len(list_of_clusters)):
+                if self.X[list_of_clusters[cluster_id]].size == 0:
+                    continue
+                D = pairwise_distances(self.X[point_idx_list[point_idx:point_idx + batch], :],
+                                       self.X[list_of_clusters[cluster_id], :], metric=self.affinity)
+                dist_from_cluster_array = np.mean(np.sort(D, axis=1)[:, 0:self.k], axis=1)
+                for i in range(batch):
+                    if dist_from_cluster_array[i] < min_dist[i]:
+                        min_dist[i] = dist_from_cluster_array[i]
+                        point_id[i] = cluster_id
+                y_pred[point_idx_list[point_idx:point_idx + batch]] = point_id
+        for i, val in zip(self.idx_sampled, y_pred_sub):
+            y_pred[i] = val
+        return y_pred
+
 
     def predict_k(self, min_k= 1, max_k = 100, y_true=[], plot_scores=False, path=False, k_jumps=3, runparallel = True):
         """
@@ -232,7 +275,7 @@ class KMDClustering:
         return successful_k[np.argmax(in_score_list)]
 
 
-    def fit(self,X):
+    def fit(self,X,sub_sample=False,percent_size=0.2,seed = 1):
         """
         predict cluster labels using kmd Linkage
         :return:
@@ -240,6 +283,12 @@ class KMDClustering:
         Z - computed linkage matrix
         outlier list - list of objects classified as outliers
         """
+        self.sub_sample = sub_sample
+        if sub_sample:
+            self.sample_data(X,percent_size,seed)
+        else:
+            self.dataset = X
+        self.calc_dists(self.dataset,self.affinity)
 
         if self.affinity == 'precompted':
             self.dists = X
@@ -247,7 +296,7 @@ class KMDClustering:
             self.dists = self.clac_dists(X,self.affinity)
 
         if self.min_cluster_size == 'compute':
-            self.min_cluster_size = max(int(X.shape[0] / (self.n_clusters * 10)), 2)
+            self.min_cluster_size = max(int(self.dataset.shape[0] / (self.n_clusters * 10)), 2)
             print ('Default minimum cluster size is : ' + str(
                 self.min_cluster_size) + ' calculated by: max(2,#objects /(10*#clusters)) ')
             print (
