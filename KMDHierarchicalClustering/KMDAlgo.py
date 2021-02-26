@@ -165,7 +165,7 @@ class KMDClustering:
         self.path = False
 
 
-    def clac_dists(self,data, method):
+    def calc_dists(self,data, method):
         """
         calaculate distance matrix
         :param data: dataset
