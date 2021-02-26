@@ -176,13 +176,14 @@ class KMDClustering:
             corr_matrix, p_matrix = spearmanr(data, axis=1)
             return np.ones(corr_matrix.shape) - corr_matrix
         return squareform(pdist(data, method))
-        def sample_data(self,data,percent_size,seed):
-         self.X = data
-         x_to_assign,x_sampled= train_test_split(list(range(np.shape(data)[0])),test_size=percent_size,random_state=seed)
-         self.dataset = data[x_sampled,:]
-         print (self.dataset.shape)
-         self.idx_sampled = x_sampled
-         self.idx_to_assign = x_to_assign
+    
+    def sample_data(self,data,percent_size,seed):
+     self.X = data
+     x_to_assign,x_sampled= train_test_split(list(range(np.shape(data)[0])),test_size=percent_size,random_state=seed)
+     self.dataset = data[x_sampled,:]
+     print (self.dataset.shape)
+     self.idx_sampled = x_sampled
+     self.idx_to_assign = x_to_assign
 
     def assign_points(self,y_pred_sub, batch=5000):
         list_of_clusters = create_list_of_clusters(y_pred_sub, self.idx_sampled)
