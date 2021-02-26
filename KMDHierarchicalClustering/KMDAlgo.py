@@ -294,7 +294,7 @@ class KMDClustering:
         if self.affinity == 'precompted':
             self.dists = X
         else:
-            self.dists = self.clac_dists(X,self.affinity)
+            self.dists = self.calc_dists(X,self.affinity)
 
         if self.min_cluster_size == 'compute':
             self.min_cluster_size = max(int(self.dataset.shape[0] / (self.n_clusters * 10)), 2)
