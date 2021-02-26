@@ -208,15 +208,7 @@ class KMDClustering:
         for i, val in zip(self.idx_sampled, y_pred_sub):
             y_pred[i] = val
         return y_pred
-    
-        def sample_data(self,data,percent_size,seed):
-         self.X = data
-         x_to_assign,x_sampled= train_test_split(list(range(np.shape(data)[0])),test_size=percent_size,random_state=seed)
-         self.dataset = data[x_sampled,:]
-         print (self.dataset.shape)
-         self.idx_sampled = x_sampled
-         self.idx_to_assign = x_to_assign
-
+  
 
     def predict_k(self, min_k= 1, max_k = 100, y_true=[], plot_scores=False, path=False, k_jumps=3, runparallel = True):
         """
