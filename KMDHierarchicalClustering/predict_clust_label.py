@@ -110,7 +110,7 @@ def get_clust_dict(list_of_nodes,n):
 
 
 
-def predict(Z,n_clusters,min_clust_size,dists,k,certainty = 0.5):
+def predict_label(KMDHAC):
     """
     predict clusters and outliers using clustering dendrogeam
     all clusters smaller then min_clust_size are considered as outliers
@@ -120,9 +120,16 @@ def predict(Z,n_clusters,min_clust_size,dists,k,certainty = 0.5):
     :param n: nimber of points
     :return: y_pred:cluster assigen
     """
+    Z = KMDHAC.Z
+    n_clusters = KMDHAC.n_clusters
+    min_clust_size = KMDHAC.min_cluster_size
+    dists = KMDHAC.dists
+    certainty = KMDHAC.certainty
+    k = KMDHAC.k
+    n = KMDHAC.n
     Z_tree = cluster.hierarchy.to_tree(Z)
     list_of_nodes= cluster_bfs(n_clusters,Z_tree,min_clust_size)
-    y_pred,all_dists_sum,merge_dists_sum = get_clust_dict(list_of_nodes,dists.shape[0])
+    y_pred,all_dists_sum,merge_dists_sum = get_clust_dict(list_of_nodes,n)
     list_of_clusters = [[] for i in range(n_clusters+1)]
 
 
