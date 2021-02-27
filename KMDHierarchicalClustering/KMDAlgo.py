@@ -309,7 +309,7 @@ class KMDClustering:
             self.k = self.predict_k( min_k= self.k_scan_range[0], max_k = self.k_scan_range[1],k_jumps= self.k_scan_range[2],y_true = self.y_true,plot_scores = self.plot_scores, path= self.path )
             print ('Predicted k is : '+str(self.k))
 
-        n = np.shape(dists)[0]
+        n = np.shape(self.dists)[0]
         self.Z = fast_linkage(self.dists, n, self.k)
 
     def predict(self,X):
