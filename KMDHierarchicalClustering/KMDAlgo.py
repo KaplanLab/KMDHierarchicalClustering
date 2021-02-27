@@ -242,7 +242,7 @@ class KMDClustering:
             Z = fast_linkage(dists, n, k)
             Z_list.append(Z)
         for Z in Z_list:
-            clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score, outlier_list = predict(
+            clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score, outlier_list = predict_label(
                 Z, num_of_clusters, min_cluster_size, dists, k)
             if sil_score > -1 :
                 in_score_list.append(sil_score)
@@ -331,7 +331,7 @@ class KMDClustering:
         M_list = []
         accuracy_list = []
         for M in range(2,500,10):
-            clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict(self.Z, self.n_clusters,M, self.dists, self.k, self.certainty )
+            clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict_label(self.Z, self.n_clusters,M, self.dists, self.k, self.certainty )
             sil_score_list.append(sil_score)
             M_list.append(M)
             accuracy_list.append(hungarian_acc(y_true,clust_assign))
