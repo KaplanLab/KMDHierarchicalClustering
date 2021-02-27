@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import pairwise_distances
 
 from .kmd_array import make_kmd_array, merge_clusters
-from .predict_clust_label import predict
+from .predict_clust_label import predict_label
 from .cluster_scoring import hungarian_acc
 import warnings
 #ignore by message
