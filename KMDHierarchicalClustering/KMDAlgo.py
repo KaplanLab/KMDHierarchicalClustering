@@ -238,6 +238,7 @@ class KMDClustering:
 
         Z_list = []
         for k in k_list:
+            print('calculating k='+str(k))
             Z = fast_linkage(dists, n, k)
             Z_list.append(Z)
         for Z in Z_list:
