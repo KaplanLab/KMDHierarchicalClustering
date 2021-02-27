@@ -313,8 +313,15 @@ class KMDClustering:
         self.Z = fast_linkage(self.dists, n, self.k)
 
     def predict(self,X):
-        clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict(self.Z, self.n_clusters,self.min_cluster_size, self.dists, self.k, self.certainty )
+        clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict_label(self)
         self.outlier_list = outlier_list
+        self.y_pred_sub = clust_assign
+
+        if self.sub_sample: # assign all unclustered objects
+            clust_assign = self.assign_points(clust_assign, batch=5000)
+        self.y_pred = clust_assign
+        return clust_assign
+        
 
         return clust_assign
 
