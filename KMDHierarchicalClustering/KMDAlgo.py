@@ -298,7 +298,8 @@ class KMDClustering:
             self.dists = self.dataset 
         else:
             self.dists = self.calc_dists(self.dataset,self.affinity)
-
+        self.n = np.shape(self.dists)[0]
+        
         if self.min_cluster_size == 'compute':
             self.min_cluster_size = max(int(self.dataset.shape[0] / (self.n_clusters * 10)), 2)
             print ('Default minimum cluster size is : ' + str(
@@ -310,7 +311,6 @@ class KMDClustering:
             self.k = self.predict_k( min_k= self.k_scan_range[0], max_k = self.k_scan_range[1],k_jumps= self.k_scan_range[2],y_true = self.y_true,plot_scores = self.plot_scores, path= self.path )
             print ('Predicted k is : '+str(self.k))
 
-        self.n = np.shape(self.dists)[0]
         self.Z = fast_linkage(self.dists, self.n, self.k)
 
     def predict(self,X):
