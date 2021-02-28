@@ -188,8 +188,6 @@ def predict_outlier_label(outlier_index,dists,list_of_clusters,k):
     min_dist_from_cluster = np.inf
     all_dists = []
     for cluster_id in range(1,len(list_of_clusters)):
-        print(outlier_index)
-        print(list_of_clusters[cluster_id])
         dist_from_cluster = np.mean(sorted(dists[outlier_index,list_of_clusters[cluster_id]])[0:k])
         if dist_from_cluster<min_dist_from_cluster:
             min_dist_from_cluster = dist_from_cluster
