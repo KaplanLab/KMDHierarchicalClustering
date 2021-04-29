@@ -60,6 +60,17 @@ The main parameter that users should set is `n_clusters`. We recommend using def
 
 `path`: path to self prediction for each k, if False prediction will not be saved.
 
+```
+fit(self,X,sub_sample=False,percent_size=0.2,seed = 1)
+```
+`X` : Dataset to cluster in numpy array format 
+
+`sub_sample`: If True ,dataset will be subsampled and a post hoc cluster inffering method will be conducted, reccomended on large dataset 
+
+`percent_size`: fraction of dataset to subsample(if percent_size<1)/ size of dataset to subsample(if percent_size>1)
+
+`seed`: seed to randomly subsample 
+
 
 ## Demos 
 
