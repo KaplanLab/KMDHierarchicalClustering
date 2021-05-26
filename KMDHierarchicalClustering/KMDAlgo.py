@@ -8,7 +8,7 @@ import sys
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import pairwise_distances
 
-from .kmd_array import make_kmd_array, merge_clusters
+from .kmd_array import merge_clusters
 from .predict_clust_label import predict_label
 from .cluster_scoring import hungarian_acc
 import warnings
@@ -234,7 +234,6 @@ class KMDClustering:
         ex_score_list = []
         successful_k = []
         k_list = list(range(min_k, max_k, k_jumps))
-        k_min_dists = make_kmd_array(dists, n)
 
         Z_list = []
         for k in k_list:
