@@ -233,9 +233,9 @@ class KMDClustering:
         in_score_list = []
         ex_score_list = []
         successful_k = []
+        Z_list = []
         k_list = list(range(min_k, max_k, k_jumps))
 
-        Z_list = []
         for k in k_list:
             print('calculating k='+str(k))
             Z = fast_linkage(dists, n, k)
@@ -260,6 +260,7 @@ class KMDClustering:
             in_score_list[i] = sqrt(in_score_list[i]) - ((successful_k[i] / n))
         self.sil_score = max(in_score_list)
 
+
         if plot_scores:
             plt.figure()
             fig, ax1 = plt.subplots()
@@ -276,7 +277,9 @@ class KMDClustering:
             fig.tight_layout()
             plt.savefig('in_and_ex_score_vs_k')
             plt.show()
-        return successful_k[np.argmax(in_score_list)]
+        best_k_idx = np.argmax(in_score_list)
+        self.Z = Z_list[best_k_idx]
+        return successful_k[best_k_idx]
 
 
     def fit(self,X,sub_sample=False,percent_size=0.2,seed = 1):
@@ -310,8 +313,8 @@ class KMDClustering:
         if self.k == 'compute':
             self.k = self.predict_k( min_k= self.k_scan_range[0], max_k = self.k_scan_range[1],k_jumps= self.k_scan_range[2],y_true = self.y_true,plot_scores = self.plot_scores, path= self.path )
             print ('Predicted k is : '+str(self.k))
-
-        self.Z = fast_linkage(self.dists, self.n, self.k)
+        else:
+            self.Z = fast_linkage(self.dists, self.n, self.k)
 
     def predict(self,X):
         clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict_label(self)
