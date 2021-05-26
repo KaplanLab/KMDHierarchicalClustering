@@ -32,12 +32,20 @@ def k_min_sparse_topkl(dists, n):
     return k_min_dists
 
 
-def merge_clusters(k_dists,x,y,k):
-
+def merge_clusters(k_dists,dists,x,y,k,size):
     n = k_dists.shape[0]
-    # k_dists[:,y] = k_dists[:,y] + k_dists[:,x]
     for i in range(n):
-           k_dists[i,y] = merge_arrays(k_dists[i,y],k_dists[i,x],k)
+        if size[i] == 1.0 and size[y] == 1.0:
+            y_array = array.array('f',[dists[i,y]])
+        else:
+            y_array = k_dists[i,y]
+
+        if size[i] == 1.0 and size[x] == 1.0:
+            x_array = array.array('f',[dists[i,x]])
+        else:
+            x_array = k_dists[i,x]
+
+        k_dists[i,y] = merge_arrays(y_array,x_array,k)
     k_dists[y,:] = k_dists[:,y]
     merged_vec = np.array([get_mean_val(k_neigbors_list) for k_neigbors_list in k_dists[:,y]])
     # delete

@@ -391,18 +391,16 @@ def find_min_dist(n , D, size, x):
 def fast_linkage(D,n,K,data =np.array([])):
     Z = np.empty((n - 1, 4))
     size = np.ones(n)  # sizes of clusters
-    # generating 3D array of the K minimum dists for each new cluster
-    if data.shape[0] == 0 :
-        K_min_dists = make_kmd_array(D, n)
-    else:
-        K_min_dists = data
 
+    # generating empty 3D array of the K minimum dists for each new cluster
+    K_min_dists =np.empty((n,n),dtype=np.object)
     dists = D.copy() # Distances between clusters.
 
     # ID of a cluster to put into linkage matrix.
     cluster_id = np.arange(n,dtype= int)
     neighbor = np.empty(n - 1,dtype= int)
     min_dist = np.empty(n - 1,dtype= np.float64)
+
     # initializing the heap finding closest neighbor to leaf from the rest of the list of leafs
     for x in range(n - 1):
         neighbor[x], min_dist[x] = find_min_dist(n, dists, size, x)
@@ -440,14 +438,15 @@ def fast_linkage(D,n,K,data =np.array([])):
         Z[k, 2] = dist
         Z[k, 3] = nx + ny
 
+        # update k_min_dists
+        K_min_dists,new_cluster_vec = merge_clusters(K_min_dists,dists, x, y, K ,size)
+        dists[:, y] = new_cluster_vec
+        dists[y, :] = new_cluster_vec
+
+
         size[x] = 0  # Cluster x will be dropped.
         size[y] = nx + ny  # Cluster y will be replaced with the new cluster.
         cluster_id[y] = n + k  # Update ID of y.
-
-        # update k_min_dists
-        K_min_dists,new_cluster_vec = merge_clusters(K_min_dists, x, y, K)
-        dists[:, y] = new_cluster_vec
-        dists[y, :] = new_cluster_vec
 
 
         # Reassign neighbor candidates from x to y.
