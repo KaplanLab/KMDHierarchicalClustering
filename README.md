@@ -80,5 +80,5 @@ Zeisel15_dataset.ipynb - Evaluaets performance on a single cell dataset - - expe
 
 Lawlor17_dataset.ipynb - Evaluates performance on a single cell dataset - - expected run time: ~2 minutes
 
-Li17_dataset.ipynb - Evaluates performance on a single cell dataset - - expected run time: ~1 minute
+Li17_dataset.ipynb - Evaluates performance on a single cell dataset - - expected run time: ~10 seconds
 
