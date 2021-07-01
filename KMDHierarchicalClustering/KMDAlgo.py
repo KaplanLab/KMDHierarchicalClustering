@@ -223,8 +223,8 @@ class KMDClustering:
         maximum_size = int((memory_model - free_memory).roots[1] )# find positive root of polynom to determine maximum size
         if memory_model(self.n) > free_memory:
             raise MemoryError('Dataset with ' + str(self.n) + ' objects is too large for ' + str(
-                free_memory) + ' free memory, subsampling to size smaller then ' + str(
-                maximum_size) + ' objects is recommended, please specify subsampeling = True, percent_size = number smaller then ' + str(
+                free_memory) + 'MB free memory, subsampling to size smaller then ' + str(
+                maximum_size) + ' objects is recommended, please specify subsampeling = True, percent_size = # <' + str(
                 maximum_size))
             raise SystemExit
   
