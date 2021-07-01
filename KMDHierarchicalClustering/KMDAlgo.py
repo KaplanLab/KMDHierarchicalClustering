@@ -7,11 +7,13 @@ from multiprocessing import Pool
 import sys
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import pairwise_distances
-
+import os
 from .kmd_array import merge_clusters
 from .predict_clust_label import predict_label
 from .cluster_scoring import hungarian_acc
 import warnings
+import platform
+
 #ignore by message
 warnings.filterwarnings("ignore", message="invalid value encountered in true_divide")
 warnings.filterwarnings("ignore", message="invalid value encountered in double_scalars")
@@ -153,7 +155,6 @@ class KMDClustering:
         :param path - path to self prediction for each k , if False - prediction will not be saved
         will be required
         """
-
         self.certainty = certainty
         self.n_clusters = n_clusters
         self.affinity = affinity
@@ -175,7 +176,12 @@ class KMDClustering:
         if method == 'spearman':
             corr_matrix, p_matrix = spearmanr(data, axis=1)
             return np.ones(corr_matrix.shape) - corr_matrix
-        return squareform(pdist(data, method))
+        try:
+            data = squareform(pdist(data, method))
+        except MemoryError:
+            print('MemoryError occurred while calculating a distance matrix')
+            print ('Using the subsampling option is recommended')
+        return data
     
     def sample_data(self,data,percent_size,seed):
          self.X = data
@@ -211,6 +217,16 @@ class KMDClustering:
         for i, val in zip(self.idx_sampled, y_pred_sub):
             y_pred[i] = val
         return y_pred
+
+    def memory_check(self,free_memory):
+        memory_model = np.poly1d([2.666e-05,  0.01327 , 75.76]) # fitted memory usage vs data size
+        maximum_size = int((memory_model - free_memory).roots[1] )# find positive root of polynom to determine maximum size
+        if memory_model(self.n) > free_memory:
+            raise MemoryError('Dataset with ' + str(self.n) + ' objects is too large for ' + str(
+                free_memory) + ' free memory, subsampling to size smaller then ' + str(
+                maximum_size) + ' objects is recommended, please specify subsampeling = True, percent_size = number smaller then ' + str(
+                maximum_size))
+            raise SystemExit
   
 
     def predict_k(self, min_k= 1, max_k = 100, y_true=[], plot_scores=False, path=False, k_jumps=3, runparallel = True):
@@ -294,15 +310,32 @@ class KMDClustering:
         if sub_sample:
             self.sample_data(X,percent_size,seed)
         else:
+            self.n = np.shape(X)[0]
+            if platform.system() == 'Linux':
+                total_memory, used_memory, free_memory = map(int, os.popen('free -t -m').readlines()[-1].split()[1:])
+                self.memory_check(free_memory)
+            else:
+                try:
+                    import psutil
+                    free_memory= psutil.virtual_memory()
+                    free_memory = free_memory.free>> 20
+                    self.memory_check(free_memory)
+
+                except ImportError:
+                    print ('Warning: It was not possible to perform free memory monitoring,'
+                           ' it is recommended to use the subsampling option in medium and large datasets')
+                    pass
+
             self.dataset = X
-        self.calc_dists(self.dataset,self.affinity)
+            self.calc_dists(self.dataset,self.affinity)
+
 
         if self.affinity == 'precompted':
             self.dists = self.dataset 
         else:
             self.dists = self.calc_dists(self.dataset,self.affinity)
         self.n = np.shape(self.dists)[0]
-        
+
         if self.min_cluster_size == 'compute':
             self.min_cluster_size = max(int(self.dataset.shape[0] / (self.n_clusters * 10)), 2)
             print ('Default minimum cluster size is : ' + str(
@@ -329,19 +362,6 @@ class KMDClustering:
 
         return clust_assign
 
-    def predict_M(self,y_true):
-        sil_score_list = []
-        M_list = []
-        accuracy_list = []
-        for M in range(2,500,10):
-            clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict_label(self.Z, self.n_clusters,M, self.dists, self.k, self.certainty )
-            sil_score_list.append(sil_score)
-            M_list.append(M)
-            accuracy_list.append(hungarian_acc(y_true,clust_assign))
-        np.save('sil_score_m',sil_score_list)
-        np.save('M_list', M_list)
-        np.save('accuracy_list',accuracy_list)
-        return clust_assign
 
 def label(Z,  n):
     """Correctly label clusters in unsorted dendrogram."""
