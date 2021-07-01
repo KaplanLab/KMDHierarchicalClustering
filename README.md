@@ -78,7 +78,7 @@ Toy_dataset_example.ipynb - Evaluates performance on a standard set of simulated
 
 Zeisel15_dataset.ipynb - Evaluaets performance on a single cell dataset - - expected run time: ~8 minutes
 
-Lawlor17_dataset.ipynb - Evaluates performance on a single cell dataset - - expected run time: ~2 minutes
+Lawlor17_dataset.ipynb - Evaluates performance on a single cell dataset - - expected run time: ~20 seconds
 
 Li17_dataset.ipynb - Evaluates performance on a single cell dataset - - expected run time: ~10 seconds
 
