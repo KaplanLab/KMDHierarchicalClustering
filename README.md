@@ -10,7 +10,7 @@ Python Dependencies:
  scipy>=1.3.0
  sklearn>=0.23.1
  matplotlib>=3.1.2
- psutil>=5.8.0  # recommended for Windows and macOS platform users, in order to check avilable memory 
+ psutil>=5.8.0  # recommended for Windows and macOS platform users, in order to check available memory 
  ```
 
 ## Getting started
