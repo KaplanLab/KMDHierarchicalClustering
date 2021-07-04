@@ -74,9 +74,9 @@ fit(self,X,sub_sample=False,percent_size=0.2,seed = 1)
 
 ## Demos 
 
-Toy_dataset_example.ipynb - Evaluates performance on a standard set of simulated toy datasets - expected run time: ~25 minutes
+Toy_dataset_example.ipynb - Evaluates performance on a standard set of simulated toy datasets - expected run time: ~8 minutes
 
-Zeisel15_dataset.ipynb - Evaluaets performance on a single cell dataset - - expected run time: ~8 minutes
+Zeisel15_dataset.ipynb - Evaluaets performance on a single cell dataset - - expected run time: ~4 minutes
 
 Lawlor17_dataset.ipynb - Evaluates performance on a single cell dataset - - expected run time: ~20 seconds
 
