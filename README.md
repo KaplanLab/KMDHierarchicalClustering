@@ -36,7 +36,7 @@ y = kmd_cluster.predict(X)
 Parameters:
 
 ```
-KMDClustering(k='compute', n_clusters = 2, min_cluster_size = 'compute', affinity = 'euclidean', certainty = 0.5 ,k_scan_range = (1,100,3), y_true = [], plot_scores=False, path=False)
+KMD = KMDClustering(k='compute', n_clusters = 2, min_cluster_size = 'compute', affinity = 'euclidean', certainty = 0.5 ,k_scan_range = (1,100,3), y_true = [], plot_scores=False, path=False)
 ```
 
 The main parameter that users should set is `n_clusters`. We recommend using default values for the rest of the parameters unless there is a specific reason to change these.
@@ -61,7 +61,7 @@ The main parameter that users should set is `n_clusters`. We recommend using def
 `path`: path to self prediction for each k, if False prediction will not be saved.
 
 ```
-fit(self,X,sub_sample=False,percent_size=0.2,seed = 1)
+KMD.fit(X,sub_sample=False,percent_size=0.2,seed = 1)
 ```
 `X` : Dataset to cluster in numpy array format 
 
