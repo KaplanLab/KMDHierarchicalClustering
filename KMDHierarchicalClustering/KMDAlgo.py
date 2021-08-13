@@ -139,7 +139,7 @@ def create_list_of_clusters(y_pred, indexes):
     return list_of_clusters
 
 class KMDClustering:
-    def __init__(self, k='compute', n_clusters = 2, min_cluster_size = 'compute', affinity = 'euclidean', certainty = 0.5 ,k_scan_range = (1,100,3), y_true = [], plot_scores=False,path=False):
+    def __init__(self, k='compute', n_clusters = 2, min_cluster_size = 'compute', affinity = 'euclidean', certainty = 0.5 ,k_scan_range = (1,100,3)):
         """
         :param k-number of minimum distances to calculate distance between clusters. if flag is compute, best k will be predicted.
         :param n_clusters - number of clusters
@@ -173,7 +173,9 @@ class KMDClustering:
         :param method: can be 'spearman', ‘braycurtis’, ‘canberra’, ‘chebyshev’, ‘cityblock’, ‘correlation’, ‘cosine’, ‘dice’, ‘euclidean’, ‘hamming’, ‘jaccard’, ‘jensenshannon’, ‘kulsinski’, ‘mahalanobis’, ‘matching’, ‘minkowski’, ‘rogerstanimoto’, ‘russellrao’, ‘seuclidean’, ‘sokalmichener’, ‘sokalsneath’, ‘sqeuclidean’, ‘yule’.
         :return: distance matrix
         """
-        if method == 'spearman':
+        if method == 'precompted':
+            return data
+        elif method == 'spearman':
             corr_matrix, p_matrix = spearmanr(data, axis=1)
             return np.ones(corr_matrix.shape) - corr_matrix
         try:
