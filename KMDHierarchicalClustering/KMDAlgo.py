@@ -173,7 +173,7 @@ class KMDClustering:
         :param method: can be 'spearman', ‘braycurtis’, ‘canberra’, ‘chebyshev’, ‘cityblock’, ‘correlation’, ‘cosine’, ‘dice’, ‘euclidean’, ‘hamming’, ‘jaccard’, ‘jensenshannon’, ‘kulsinski’, ‘mahalanobis’, ‘matching’, ‘minkowski’, ‘rogerstanimoto’, ‘russellrao’, ‘seuclidean’, ‘sokalmichener’, ‘sokalsneath’, ‘sqeuclidean’, ‘yule’.
         :return: distance matrix
         """
-        if method == 'precompted':
+        if method == 'precomputed':
             return data
         elif method == 'spearman':
             corr_matrix, p_matrix = spearmanr(data, axis=1)
