@@ -173,7 +173,7 @@ class KMDClustering:
         :param method: can be 'spearman', ‘braycurtis’, ‘canberra’, ‘chebyshev’, ‘cityblock’, ‘correlation’, ‘cosine’, ‘dice’, ‘euclidean’, ‘hamming’, ‘jaccard’, ‘jensenshannon’, ‘kulsinski’, ‘mahalanobis’, ‘matching’, ‘minkowski’, ‘rogerstanimoto’, ‘russellrao’, ‘seuclidean’, ‘sokalmichener’, ‘sokalsneath’, ‘sqeuclidean’, ‘yule’.
         :return: distance matrix
         """
-        if method == 'precomputed':
+        if method == 'precompted':
             return data
         elif method == 'spearman':
             corr_matrix, p_matrix = spearmanr(data, axis=1)
@@ -355,6 +355,7 @@ class KMDClustering:
         clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict_label(self)
         self.outlier_list = outlier_list
         self.y_pred_sub = clust_assign
+        self.sil_score = sil_score
 
         if self.sub_sample: # assign all unclustered objects
             clust_assign = self.assign_points(clust_assign, batch=5000)
