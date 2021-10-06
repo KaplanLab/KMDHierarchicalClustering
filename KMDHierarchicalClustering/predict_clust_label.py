@@ -139,6 +139,7 @@ def predict_label(KMDHAC):
             list_of_clusters[0].append(i)
         else:
             list_of_clusters[int(y_pred[i])].append(i)
+    list_of_clusters = list_of_clusters
 
 
     # predict  cluster of outliers
@@ -148,19 +149,12 @@ def predict_label(KMDHAC):
         for i in range(len(y_pred)) :
             if y_pred[i] == -1 :
                 outlier_list.append(i)
-                y_pred[i],score = predict_outlier_label(i,dists,list_of_clusters,k)
+                y_pred[i],score,list_of_clusters = predict_outlier_label(i,dists,list_of_clusters,k)
                 outlier_score.append((i,score))
                 if score < certainty:
                     y_pred[i] = -1
-
-    #create list of index for each cluster
-    list_of_clusters = [[] for i in range(n_clusters+1)]
-
-    for i in range(y_pred.shape[0]):
-        if y_pred[i] == -1:
-            list_of_clusters[0].append(i)
-        else:
-            list_of_clusters[int(y_pred[i])].append(i)
+                else:
+                    list_of_clusters[int(y_pred[i])].append(i)
 
     if not any(list_of_clusters[1:]):
         print("all labels are outliers")
