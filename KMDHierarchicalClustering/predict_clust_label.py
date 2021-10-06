@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import cluster
+import random
 
 
 class dend_search_tree:
