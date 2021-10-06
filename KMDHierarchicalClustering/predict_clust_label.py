@@ -149,7 +149,7 @@ def predict_label(KMDHAC):
         for i in range(len(y_pred)) :
             if y_pred[i] == -1 :
                 outlier_list.append(i)
-                y_pred[i],score,list_of_clusters = predict_outlier_label(i,dists,list_of_clusters,k)
+                y_pred[i],score = predict_outlier_label(i,dists,list_of_clusters,k)
                 outlier_score.append((i,score))
                 if score < certainty:
                     y_pred[i] = -1
