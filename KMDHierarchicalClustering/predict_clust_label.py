@@ -146,9 +146,9 @@ def predict_label(KMDHAC):
     outlier_score = []
     outlier_list = []
     idx_list = list(range(len(y_pred)))
-    shufflled_idx_list = random.shuffle(idx_list)
+    random.shuffle(idx_list)
     if len(list_of_clusters[1])>0:
-        for i in shufflled_idx_list :
+        for i in idx_list :
             if y_pred[i] == -1 :
                 outlier_list.append(i)
                 y_pred[i],score = predict_outlier_label(i,dists,list_of_clusters,k)

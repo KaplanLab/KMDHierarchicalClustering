@@ -2,21 +2,34 @@ import numpy as np
 from math import sqrt
 from scipy.stats import spearmanr
 import matplotlib.pyplot as plt
-from scipy.spatial.distance import pdist, squareform
+from scipy.spatial.distance import pdist, squareform,cdist
 from multiprocessing import Pool
 import sys
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import pairwise_distances
 import os
 from .kmd_array import merge_clusters
 from .predict_clust_label import predict_label
 from .cluster_scoring import hungarian_acc
 import warnings
 import platform
+from scipy.spatial.distance import euclidean, correlation
 
 #ignore by message
 warnings.filterwarnings("ignore", message="invalid value encountered in true_divide")
 warnings.filterwarnings("ignore", message="invalid value encountered in double_scalars")
+
+
+def nan_euclidean(a,b):
+    a = np.array(a,dtype=np.float64)
+    b = np.array(b,dtype=np.float64)
+    nan_row_idx = np.any(np.vstack((np.isnan(a),np.isnan(b))), axis=0)
+    return euclidean(a[~nan_row_idx],b[~nan_row_idx])/a[~nan_row_idx].shape[0]
+
+def nan_correlation(a,b):
+    a = np.array(a,dtype=np.float64)
+    b = np.array(b,dtype=np.float64)
+    nan_row_idx = np.any(np.vstack((np.isnan(a),np.isnan(b))), axis=0)
+    return correlation(a[~nan_row_idx],b[~nan_row_idx])/a[~nan_row_idx].shape[0]
 
 
 class LinkageUnionFind:
@@ -165,6 +178,16 @@ class KMDClustering:
         self.plot_scores = False
         self.path = False
 
+    def is_nan_values(self,data):
+        self.nan_idx = np.all(np.isnan(data),axis = 0 )
+        if np.any(np.isnan(data)):
+            if type(self.affinity) == str :
+                if self.affinity == 'nan_euclidean' or self.affinity == 'nan_correlation':
+                    data = data[~self.nan_idx,:]
+                else:
+                    raise ValueError('input array contains nan values please use suitable method such as nan_euclidean or nan_correlation ')
+                    raise SystemExit
+        return data
 
     def calc_dists(self,data, method):
         """
@@ -173,13 +196,20 @@ class KMDClustering:
         :param method: can be 'spearman', ‘braycurtis’, ‘canberra’, ‘chebyshev’, ‘cityblock’, ‘correlation’, ‘cosine’, ‘dice’, ‘euclidean’, ‘hamming’, ‘jaccard’, ‘jensenshannon’, ‘kulsinski’, ‘mahalanobis’, ‘matching’, ‘minkowski’, ‘rogerstanimoto’, ‘russellrao’, ‘seuclidean’, ‘sokalmichener’, ‘sokalsneath’, ‘sqeuclidean’, ‘yule’.
         :return: distance matrix
         """
+
         if method == 'precompted':
             return data
         elif method == 'spearman':
             corr_matrix, p_matrix = spearmanr(data, axis=1)
             return np.ones(corr_matrix.shape) - corr_matrix
         try:
-            data = squareform(pdist(data, method))
+            if method == 'nan_euclidean':
+                data = squareform(pdist(data, nan_euclidean))
+            if method == 'nan_correlation':
+                data = squareform(pdist(data, nan_correlation))
+            else:
+                data = squareform(pdist(data, method))
+
         except MemoryError:
             print('MemoryError occurred while calculating a distance matrix')
             print ('Using the subsampling option is recommended')
@@ -208,8 +238,11 @@ class KMDClustering:
             for cluster_id in range(len(list_of_clusters)):
                 if self.X[list_of_clusters[cluster_id]].size == 0:
                     continue
-                D = pairwise_distances(self.X[point_idx_list[point_idx:point_idx + batch], :],
-                                       self.X[list_of_clusters[cluster_id], :], metric=self.affinity)
+                if self.affinity == 'precomputed':
+                    D = self.X[point_idx:point_idx + batch,list_of_clusters[cluster_id]]
+                else:
+                    D = cdist(self.X[point_idx_list[point_idx:point_idx + batch], :],
+                                           self.X[list_of_clusters[cluster_id], :], metric=self.affinity)
                 dist_from_cluster_array = np.mean(np.sort(D, axis=1)[:, 0:self.k], axis=1)
                 for i in range(batch):
                     if dist_from_cluster_array[i] < min_dist[i]:
@@ -328,6 +361,7 @@ class KMDClustering:
                            ' it is recommended to use the subsampling option in medium and large datasets')
                     pass
 
+            X = self.is_nan_values(X)
             self.dataset = X
             self.calc_dists(self.dataset,self.affinity)
 
@@ -352,13 +386,17 @@ class KMDClustering:
             self.Z = fast_linkage(self.dists, self.n, self.k)
 
     def predict(self,X):
-        clust_assign, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict_label(self)
+        y_pred, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict_label(self)
         self.outlier_list = outlier_list
-        self.y_pred_sub = clust_assign
+        self.y_pred_sub = y_pred
         self.sil_score = sil_score
+        clust_assign = np.zeros(self.nan_idx.size)
 
         if self.sub_sample: # assign all unclustered objects
             clust_assign = self.assign_points(clust_assign, batch=5000)
+        else:
+            clust_assign[self.nan_idx] = -2
+            clust_assign[~self.nan_idx] = y_pred
         self.y_pred = clust_assign
         return clust_assign
         
