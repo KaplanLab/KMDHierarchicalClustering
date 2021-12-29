@@ -29,7 +29,10 @@ def nan_correlation(a,b):
     a = np.array(a,dtype=np.float64)
     b = np.array(b,dtype=np.float64)
     nan_row_idx = np.any(np.vstack((np.isnan(a),np.isnan(b))), axis=0)
-    return correlation(a[~nan_row_idx],b[~nan_row_idx])/a[~nan_row_idx].shape[0]
+    if correlation(a[~nan_row_idx],b[~nan_row_idx])/a[~nan_row_idx].shape[0] <0 :
+        print(a[~nan_row_idx])
+        print(b[~nan_row_idx])
+    return correlation(a[~nan_row_idx],b[~nan_row_idx],centered=False)/a[~nan_row_idx].shape[0]
 
 
 class LinkageUnionFind:
@@ -179,7 +182,7 @@ class KMDClustering:
         self.path = False
 
     def is_nan_values(self,data):
-        self.nan_idx = np.all(np.isnan(data),axis = 0 )
+        self.nan_idx = np.all(np.isnan(data),axis = 1 )
         if np.any(np.isnan(data)):
             if type(self.affinity) == str :
                 if self.affinity == 'nan_euclidean' or self.affinity == 'nan_correlation':
@@ -205,7 +208,7 @@ class KMDClustering:
         try:
             if method == 'nan_euclidean':
                 data = squareform(pdist(data, nan_euclidean))
-            if method == 'nan_correlation':
+            elif method == 'nan_correlation':
                 data = squareform(pdist(data, nan_correlation))
             else:
                 data = squareform(pdist(data, method))
@@ -344,6 +347,7 @@ class KMDClustering:
         self.sub_sample = sub_sample
         if sub_sample:
             self.sample_data(X,percent_size,seed)
+            self.dataset = self.is_nan_values(self.dataset)
         else:
             self.n = np.shape(X)[0]
             if platform.system() == 'Linux':
