@@ -394,7 +394,7 @@ class KMDClustering:
         self.outlier_list = outlier_list
         self.y_pred_sub = y_pred
         self.sil_score = sil_score
-        clust_assign = np.zeros(self.nan_idx.size)
+        clust_assign = np.zeros(self.nan_idx.size,dtype=int)
 
         if self.sub_sample: # assign all unclustered objects
             clust_assign = self.assign_points(clust_assign, batch=5000)
