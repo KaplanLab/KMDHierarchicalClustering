@@ -357,7 +357,7 @@ class KMDClustering:
                 try:
                     import psutil
                     free_memory= psutil.virtual_memory()
-                    free_memory = free_memory.free>> 20
+                    free_memory = free_memory.available >> 20
                     self.memory_check(free_memory)
 
                 except ImportError:
