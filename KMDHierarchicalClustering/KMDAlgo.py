@@ -155,7 +155,7 @@ def create_list_of_clusters(y_pred, indexes):
     return list_of_clusters
 
 class KMDClustering:
-    def __init__(self, k='compute', n_clusters = 2, min_cluster_size = 'compute', affinity = 'euclidean', certainty = 0.5 ,k_scan_range = (1,100,3)):
+    def __init__(self, k='compute', n_clusters = 2, min_cluster_size = 'compute', affinity = 'euclidean', certainty = 0.5 ,k_scan_range = range(1,100,3)):
         """
         :param k-number of minimum distances to calculate distance between clusters. if flag is compute, best k will be predicted.
         :param n_clusters - number of clusters
@@ -165,7 +165,7 @@ class KMDClustering:
         or any metric used by scipy.spatial.distance.pdist.If “precomputed”,a distance matrix (instead of a similarity matrix) is needed as input for the fit method
         :param certainty- parameter indicating how certain the algorithm is in the correctness of its classification in
         the outlier hanging step, if 0.5 - all outliers will be hanged if 1 - outliers wikk not be hanged
-        :param k_scan_range-(tuple) the range of k's used to search for k.(start k, stop k, jumps)
+        :param k_scan_range-iterable of k values to test
         :param y_true-cluster True labels
         :param plot_scores- if True, a plot of intrinsic score vs extrinsic score on different k's will be ploted, True labels
         :param path - path to self prediction for each k , if False - prediction will not be saved
@@ -176,7 +176,7 @@ class KMDClustering:
         self.affinity = affinity
         self.min_cluster_size = min_cluster_size
         self.k = k
-        self.k_scan_range = k_scan_range
+        self.k_scan_range = list(k_scan_range)
         self.y_true = []
         self.plot_scores = False
         self.path = False
@@ -267,14 +267,12 @@ class KMDClustering:
             raise SystemExit
   
 
-    def predict_k(self, min_k= 1, max_k = 100, y_true=[], plot_scores=False, path=False, k_jumps=3, runparallel = True):
+    def predict_k(self, k_scan_range, y_true=[], plot_scores=False, path=False, runparallel = True):
         """
         predicting the best k for clustering analysis using the normalized kmd silhuete score
         we run on all k's and find the highest clustering score
         if plot scores is true we plot k vs accuracy score and kmd silhuete score
-        :param min_k: minimum k
-        :param max_k: maximum k
-        :param k_jumps: an integer number specifying the incrementation
+        :param k_scan_range: iterable of k values
         :param y_true: ground truth clustering labels
         :param plot_scores: can be true or false
         :param path: path to save prediction for each k
@@ -288,7 +286,7 @@ class KMDClustering:
         ex_score_list = []
         successful_k = []
         Z_list = []
-        k_list = list(range(min_k, max_k, k_jumps))
+        k_list = np.array(list(k_scan_range))
 
         for k in k_list:
             print('calculating k='+str(k))
@@ -384,7 +382,7 @@ class KMDClustering:
                 'In general, minimum cluster size can be chosen to be slightly smaller than the size of the smallest expected cluster')
 
         if self.k == 'compute':
-            self.k = self.predict_k( min_k= self.k_scan_range[0], max_k = self.k_scan_range[1],k_jumps= self.k_scan_range[2],y_true = self.y_true,plot_scores = self.plot_scores, path= self.path )
+            self.k = self.predict_k(k_scan_range=self.k_scan_range, y_true = self.y_true,plot_scores = self.plot_scores, path= self.path )
             print ('Predicted k is : '+str(self.k))
         else:
             self.Z = fast_linkage(self.dists, self.n, self.k)
