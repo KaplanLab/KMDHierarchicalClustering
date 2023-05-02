@@ -162,7 +162,8 @@ def predict_label(KMDHAC):
         print("all labels are outliers")
         sil_score = -2
     else:
-        sil_score = kmd_silhouette_score(dists,list_of_clusters[1:],k)
+        lengths = [ x for x in list_of_clusters[1:] if len(x) > 0 ]
+        sil_score = kmd_silhouette_score(dists,lengths,k)
 
 
     for i in range(len(y_pred)):
