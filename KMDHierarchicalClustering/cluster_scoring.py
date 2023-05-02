@@ -111,7 +111,7 @@ def tsne_presentation(dists,label_list,y_pred):
             y_new_color_map.append(colors[clust])
 
     X = dists
-    Y = TSNE(n_components=2, perplexity=50, metric='precomputed').fit_transform(X)
+    Y = TSNE(n_components=2, perplexity=50, metric='precomputed', init='random').fit_transform(X)
 
     plt.figure()
     plt.title('Predicted labels')

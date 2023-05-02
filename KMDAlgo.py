@@ -460,7 +460,7 @@ def fast_linkage(D,n,K,data =np.array([])):
     size = np.ones(n)  # sizes of clusters
 
     # generating empty 3D array of the K minimum dists for each new cluster
-    K_min_dists =np.empty((n,n),dtype=np.object)
+    K_min_dists =np.empty((n,n),dtype=np.object_)
     dists = D.copy() # Distances between clusters.
 
     # ID of a cluster to put into linkage matrix.

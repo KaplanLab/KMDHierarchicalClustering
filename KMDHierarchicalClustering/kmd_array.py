@@ -10,7 +10,7 @@ def make_kmd_array(dists, n):
     :return: nd array of lists , each entry containing initial pair dist
     """
     print ('creating array')
-    k_min_dists = np.empty((n,n),dtype=np.object)
+    k_min_dists = np.empty((n,n),dtype=np.object_)
     for i in range(n):
         for j in range(n):
             k_min_dists[i][j] = array.array('f',[dists[i,j]])
@@ -25,7 +25,7 @@ def k_min_sparse_topkl(dists, n):
     :param k: max list size
     :return: nd array of lists , each entry containing initial pair dist
     """
-    k_min_dists = np.empty((n,n),dtype=np.object)
+    k_min_dists = np.empty((n,n),dtype=np.object_)
     for i in range(n):
         for j in range(n):
             k_min_dists[i][j] = array.array([dists[i,j]])
