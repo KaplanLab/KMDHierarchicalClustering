@@ -387,6 +387,8 @@ class KMDClustering:
         else:
             self.Z = fast_linkage(self.dists, self.n, self.k)
 
+        return self
+
     def predict(self,X):
         y_pred, node_list, all_dists_avg, merge_dists_avg, sil_score,outlier_list = predict_label(self)
         self.outlier_list = outlier_list
