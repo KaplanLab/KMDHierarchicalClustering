@@ -111,25 +111,10 @@ def get_clust_dict(list_of_nodes,n):
 
 
 
-def predict_label(KMDHAC):
-    """
-    predict clusters and outliers using clustering dendrogeam
-    all clusters smaller then min_clust_size are considered as outliers
-    :param Z: hac clustering dendrogram(scipy)
-    :param n_clusters: number of clusters
-    :param min_clust_size: the minimum points in a clusterc
-    :param n: nimber of points
-    :return: y_pred:cluster assigen
-    """
-    Z = KMDHAC.Z
-    n_clusters = KMDHAC.n_clusters
-    min_clust_size = KMDHAC.min_cluster_size
-    dists = KMDHAC.dists
-    certainty = KMDHAC.certainty
-    k = KMDHAC.k
-    n = KMDHAC.n
+def predict_from_Z(Z, n_clusters, min_clust_size, dists, k, certainty=0.5):
+    n = dists.shape[0]
     Z_tree = cluster.hierarchy.to_tree(Z)
-    list_of_nodes= cluster_bfs(n_clusters,Z_tree,min_clust_size)
+    list_of_nodes = cluster_bfs(n_clusters,Z_tree,min_clust_size)
     y_pred,all_dists_sum,merge_dists_sum = get_clust_dict(list_of_nodes,n)
     list_of_clusters = [[] for i in range(n_clusters+1)]
 
@@ -171,6 +156,24 @@ def predict_label(KMDHAC):
             y_pred[i]-=1
 
     return np.array(y_pred,dtype=int),list_of_nodes,all_dists_sum,merge_dists_sum,sil_score, outlier_list
+
+def predict_label(KMDHAC):
+    """
+    predict clusters and outliers using clustering dendrogeam
+    all clusters smaller then min_clust_size are considered as outliers
+    :param Z: hac clustering dendrogram(scipy)
+    :param n_clusters: number of clusters
+    :param min_clust_size: the minimum points in a clusterc
+    :param n: nimber of points
+    :return: y_pred:cluster assigen
+    """
+    Z = KMDHAC.Z
+    n_clusters = KMDHAC.n_clusters
+    min_clust_size = KMDHAC.min_cluster_size
+    dists = KMDHAC.dists
+    certainty = KMDHAC.certainty
+    k = KMDHAC.k
+    return predict_from_Z(Z, n_clusters, min_clust_size, dists, k, certainty=certainty)
 
 def predict_outlier_label(outlier_index,dists,list_of_clusters,k):
     """
