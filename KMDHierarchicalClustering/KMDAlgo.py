@@ -397,7 +397,7 @@ class KMDClustering:
         clust_assign = np.zeros(self.nan_idx.size,dtype=int)
 
         if self.sub_sample: # assign all unclustered objects
-            clust_assign = self.assign_points(clust_assign, batch=5000)
+            clust_assign = self.assign_points(self.y_pred_sub, batch=5000)
         else:
             clust_assign[self.nan_idx] = -2
             clust_assign[~self.nan_idx] = y_pred
