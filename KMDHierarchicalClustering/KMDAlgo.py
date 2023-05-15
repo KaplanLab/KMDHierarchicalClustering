@@ -267,7 +267,7 @@ class KMDClustering:
             raise SystemExit
   
 
-    def predict_k(self, k_scan_range, y_true=[], plot_scores=False, path=False, runparallel = True):
+    def predict_k(self, k_scan_range, y_true=[], plot_scores=False, path=False, runparallel = True, keep_Z_list=False):
         """
         predicting the best k for clustering analysis using the normalized kmd silhuete score
         we run on all k's and find the highest clustering score
@@ -292,6 +292,8 @@ class KMDClustering:
             print('calculating k='+str(k))
             Z = fast_linkage(dists, n, k)
             Z_list.append(Z)
+        if keep_Z_list:
+            self.Z_list = Z_list
         for Z,k in zip(Z_list,k_list):
             self.Z = Z 
             self.k = k
@@ -334,7 +336,7 @@ class KMDClustering:
         return successful_k[best_k_idx]
 
 
-    def fit(self,X,sub_sample=False,percent_size=0.2,seed = 1):
+    def fit(self,X,sub_sample=False,percent_size=0.2,seed = 1, keep_Z_list=False):
         """
         predict cluster labels using kmd Linkage
         :return:
@@ -382,7 +384,7 @@ class KMDClustering:
                 'In general, minimum cluster size can be chosen to be slightly smaller than the size of the smallest expected cluster')
 
         if self.k == 'compute':
-            self.k = self.predict_k(k_scan_range=self.k_scan_range, y_true = self.y_true,plot_scores = self.plot_scores, path= self.path )
+            self.k = self.predict_k(k_scan_range=self.k_scan_range, y_true = self.y_true,plot_scores = self.plot_scores, path= self.path, keep_Z_list=keep_Z_list)
             print ('Predicted k is : '+str(self.k))
         else:
             self.Z = fast_linkage(self.dists, self.n, self.k)
