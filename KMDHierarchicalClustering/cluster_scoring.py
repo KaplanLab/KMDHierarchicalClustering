@@ -31,14 +31,17 @@ def hungarian_acc(y_true,y_pred):
     y_eval = y_true[core_idx]
 
     # calcute confusion matrix, recall, precision and f1
-    conf = confusion_matrix(y_eval,y_pred_eval)
-    Recall_array = conf/conf.sum(axis=1, keepdims=True)
-    Recall_array[np.isnan(Recall_array)] = 0
-    precision_array = conf/conf.sum(axis=0, keepdims=True)
-    precision_array[np.isnan(precision_array)] = 0
-    F_array =(2*Recall_array*precision_array)/(precision_array+Recall_array)
-    F_array[np.isnan(F_array)] = 0
-    F_array = np.ones(precision_array.shape)-F_array
+    # some rows/cols of the confusion matrix can be zero, so ignore the warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings(action='ignore', message='invalid value encountered in divide')
+        conf = confusion_matrix(y_eval,y_pred_eval)
+        Recall_array = conf/conf.sum(axis=1, keepdims=True)
+        Recall_array[np.isnan(Recall_array)] = 0
+        precision_array = conf/conf.sum(axis=0, keepdims=True)
+        precision_array[np.isnan(precision_array)] = 0
+        F_array =(2*Recall_array*precision_array)/(precision_array+Recall_array)
+        F_array[np.isnan(F_array)] = 0
+        F_array = np.ones(precision_array.shape)-F_array
 
     # hungarian optimization
     row_ind, col_ind = scipy.optimize.linear_sum_assignment(F_array)
@@ -63,7 +66,7 @@ def find_permutation(real_labels, labels):
     for i in range(max(labels)+1):
         idx = labels == i
         if any(idx):
-            new_label=scipy.stats.mode(real_labels[idx])[0][0]  # Choose the most common label among data points in the cluster
+            new_label=scipy.stats.mode(real_labels[idx], axis=0)[0][0]  # Choose the most common label among data points in the cluster
             permutation.append(new_label)
         else:
             permutation.append(-1)
