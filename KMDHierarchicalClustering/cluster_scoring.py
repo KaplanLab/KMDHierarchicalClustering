@@ -22,9 +22,6 @@ def hungarian_acc(y_true,y_pred):
     # convert to numpy
     y_true = np.array(y_true)
     y_pred = np.array(y_pred)
-    # match y_true index to y pred
-    if y_true.min() == 1:
-        y_true = y_true - np.ones(y_pred.size)
     # delete outliers
     core_idx = y_pred != -1
     y_pred_eval = y_pred[core_idx]
