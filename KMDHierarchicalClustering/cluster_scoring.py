@@ -84,7 +84,7 @@ def find_matching_labels(y,y_pred):
 
 
 
-def tsne_presentation(dists,label_list,y_pred):
+def tsne_presentation(dists, label_list, y_pred, random_state=1):
     y_matching_map = []
     y_pred_map = []
     y_true_map = []
@@ -114,7 +114,7 @@ def tsne_presentation(dists,label_list,y_pred):
             y_true_map.append(colors[clust%num_colors])
 
     X = dists
-    Y = TSNE(n_components=2, perplexity=50, metric='precomputed', init='random').fit_transform(X)
+    Y = TSNE(n_components=2, perplexity=50, metric='precomputed', init='random', random_state=random_state).fit_transform(X)
 
     plt.figure()
     plt.title('Predicted labels')
