@@ -85,10 +85,9 @@ def find_matching_labels(y,y_pred):
 
 
 def tsne_presentation(dists,label_list,y_pred):
-    y_pred_color_map = []
-    y_color_map = []
-    y_new_color_map = []
-    print (max(max(label_list),max(y_pred)))
+    y_matching_map = []
+    y_pred_map = []
+    y_true_map = []
 
     # 'Muted', a colorblind-friendly scheme from https://personal.sron.nl/~pault/#sec:qualitative
     colors = [ '#CC6677', '#332288', '#DDCC77', '#117733', '#88CCEE', '#882255', '#44AA99', '#999933', '#AA4499' ]
@@ -97,39 +96,39 @@ def tsne_presentation(dists,label_list,y_pred):
     if max(label_list) >= num_colors:
         warnings.warn("More labels than colors. Some colors will be used more than once.")
     _, new_labels = hungarian_acc(label_list, y_pred)
-    y_pred= find_matching_labels(label_list,y_pred)
-    for clust in label_list:
-        if clust == -1 :
-            y_new_color_map.append(color_bad)
-        else:
-            y_color_map.append(colors[clust%num_colors])
-    for clust in y_pred:
-        if clust == -1 :
-            y_pred_color_map.append(color_bad)
-        else:
-            y_pred_color_map.append(colors[clust%num_colors])
+    y_pred = find_matching_labels(label_list,y_pred)
     for clust in new_labels:
         if clust == -1 :
-            y_new_color_map.append(color_bad)
+            y_pred_map.append(color_bad)
         else:
-            y_new_color_map.append(colors[clust%num_colors])
+            y_pred_map.append(colors[clust%num_colors])
+    for clust in y_pred:
+        if clust == -1 :
+            y_matching_map.append(color_bad)
+        else:
+            y_matching_map.append(colors[clust%num_colors])
+    for clust in label_list:
+        if clust == -1 :
+            y_true_map.append(color_bad)
+        else:
+            y_true_map.append(colors[clust%num_colors])
 
     X = dists
     Y = TSNE(n_components=2, perplexity=50, metric='precomputed', init='random').fit_transform(X)
 
     plt.figure()
     plt.title('Predicted labels')
-    plt.scatter(Y[:, 0], Y[:, 1],alpha = 0.3, c=y_new_color_map,edgecolors = 'none')
+    plt.scatter(Y[:, 0], Y[:, 1],alpha=0.3, c=y_pred_map, edgecolors='none')
     plt.show()
 
     plt.figure()
     plt.title('Matching labels')
-    plt.scatter(Y[:, 0], Y[:, 1], c=y_pred_color_map,alpha = 0.3,edgecolors = 'none')
+    plt.scatter(Y[:, 0], Y[:, 1], c=y_matching_map, alpha=0.3, edgecolors='none')
     plt.show()
 
     plt.figure()
     plt.title('True labels')
-    plt.scatter(Y[:, 0], Y[:, 1],alpha = 0.3, c=y_color_map,edgecolors = 'none')
+    plt.scatter(Y[:, 0], Y[:, 1], alpha=0.3, c=y_true_map, edgecolors='none')
     plt.show()
 
 
