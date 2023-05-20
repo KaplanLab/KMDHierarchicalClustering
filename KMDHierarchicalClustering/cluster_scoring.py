@@ -90,25 +90,29 @@ def tsne_presentation(dists,label_list,y_pred):
     y_new_color_map = []
     print (max(max(label_list),max(y_pred)))
 
-    colors = [hsv_to_rgb([(i * 0.618033988749895) % 1.0, 1, 1])
-              for i in range(int(max(max(label_list),max(y_pred))+1))]
+    # 'Muted', a colorblind-friendly scheme from https://personal.sron.nl/~pault/#sec:qualitative
+    colors = [ '#CC6677', '#332288', '#DDCC77', '#117733', '#88CCEE', '#882255', '#44AA99', '#999933', '#AA4499' ]
+    color_bad = '#DDDDDD'
+    num_colors = len(colors)
+    if max(label_list) >= num_colors:
+        warnings.warn("More labels than colors. Some colors will be used more than once.")
     _, new_labels = hungarian_acc(label_list, y_pred)
     y_pred= find_matching_labels(label_list,y_pred)
     for clust in label_list:
         if clust == -1 :
-            y_new_color_map.append('black')
+            y_new_color_map.append(color_bad)
         else:
-            y_color_map.append(colors[clust])
+            y_color_map.append(colors[clust%num_colors])
     for clust in y_pred:
         if clust == -1 :
-            y_pred_color_map.append('black')
+            y_pred_color_map.append(color_bad)
         else:
-            y_pred_color_map.append(colors[clust])
+            y_pred_color_map.append(colors[clust%num_colors])
     for clust in new_labels:
         if clust == -1 :
-            y_new_color_map.append('black')
+            y_new_color_map.append(color_bad)
         else:
-            y_new_color_map.append(colors[clust])
+            y_new_color_map.append(colors[clust%num_colors])
 
     X = dists
     Y = TSNE(n_components=2, perplexity=50, metric='precomputed', init='random').fit_transform(X)
