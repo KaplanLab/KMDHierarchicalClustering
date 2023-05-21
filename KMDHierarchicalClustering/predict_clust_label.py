@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import cluster
 import random
+from typing import Iterable
 
 
 class dend_search_tree:
@@ -233,10 +234,11 @@ def kmd_silhouette_score(dists,list_of_clusters,k):
 
     return min(sil_score_list_avg)
 
+def normalize_kmd_silhouette(silhouette: Iterable[float], k: Iterable[int], n: int):
+    _sil = np.fromiter(silhouette, dtype=float)
+    _k = np.fromiter(k, dtype=int)
 
-
-
-
-
-
-
+    norm_sil = (_sil - _sil.min()) / _sil.ptp()
+    norm_sil = np.sqrt(norm_sil) - _k/n
+    
+    return norm_sil

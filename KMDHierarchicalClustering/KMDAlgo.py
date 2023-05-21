@@ -8,7 +8,7 @@ import sys
 from sklearn.model_selection import train_test_split
 import os
 from .kmd_array import merge_clusters
-from .predict_clust_label import predict_label
+from .predict_clust_label import predict_label, normalize_kmd_silhouette
 from .cluster_scoring import hungarian_acc
 import warnings
 import platform
@@ -308,12 +308,8 @@ class KMDClustering:
                 np.save(str(path) + '_k_' + str(k), clust_assign)
 
 
-        in_score_list = np.array(in_score_list)
-        in_score_list = (in_score_list - in_score_list.min()) / (in_score_list.max() - in_score_list.min())
-        for i in range(len(successful_k)):
-            in_score_list[i] = sqrt(in_score_list[i]) - ((successful_k[i] / n))
+        in_score_list = normalize_kmd_silhouette(in_score_list, successful_k, n)
         self.sil_score = max(in_score_list)
-
 
         if plot_scores:
             plt.figure()
