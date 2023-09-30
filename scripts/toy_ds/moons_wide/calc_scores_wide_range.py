@@ -100,16 +100,19 @@ def main():
         seed = int(sys.argv[2])
         kwargs = dict(random_state=seed)
         filename = f"sil_scores_wide_moons_{ds_type}_seed{seed}.npz"
+        data_filename = f"data_moons_{ds_type}_seed{seed}.npz"
     except:
         kwargs = dict()
         filename = f"sil_scores_wide_moons_{ds_type}.npz"
+        data_filename = f"data_moons_{ds_type}.npz"
     ds_func = FUNCS[ds_type]
 
-    print(f"Running {ds_type}, saving to {filename}")
+    print(f"Running {ds_type}, saving scores to {filename} and data to {data_filename}")
     ### generate datasets ###
     n_samples = 1000
 
     noisy_circles, noisy_moons, aniso, varied = ds_func(n_samples, **kwargs)
+    np.savez(data_filename, X=noisy_moons[0], y=noisy_moons[1])
 
     # note that recomended k_scan_range is 1 to 100, the range was reduced to save time 
     datasets = [
